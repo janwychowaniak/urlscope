@@ -2,7 +2,7 @@
 
 ## Project Structure & Module Organization
 
-This repository uses a `src/` layout for the `urlscope` Python package. Library code lives in `src/urlscope/`, with internal modules such as `_exceptions.py` and `_http.py`. Reserve `src/urlscope/models/` for Pydantic response models. Put tests in `tests/`. Product requirements, contracts, and task sequencing live under `specs/001-urlscan-api-wrapper/`; treat those files as the source of truth before changing public behavior.
+This repository uses a `src/` layout for the `urlscope` Python package. Core implementation lives in `src/urlscope/`: `_client.py` for the async client, `_http.py` for transport/auth/retry behavior, `_exceptions.py` for the exception hierarchy, and `models/` for Pydantic response models. Tests live in `tests/`, with shared fixtures in `tests/conftest.py`. Product requirements and task sequencing live under `specs/001-urlscan-api-wrapper/`; treat those documents as the source of truth for API behavior.
 
 ## Build, Test, and Development Commands
 
@@ -20,15 +20,15 @@ uv sync --extra dev
 
 ## Coding Style & Naming Conventions
 
-Target Python 3.10+ and keep type annotations complete. Use `snake_case` for modules, functions, and variables; `PascalCase` for classes; and `_`-prefixed module names for internal implementation details. Keep public exports centralized in `src/urlscope/__init__.py`. Follow the contract docs when naming API-facing classes and exceptions.
+Target Python 3.10+ and keep type annotations complete. Use `snake_case` for modules, functions, and variables, `PascalCase` for classes, and `_`-prefixed module names for internal implementation details. Keep public exports centralized in `src/urlscope/__init__.py`. For models, preserve upstream JSON compatibility with Pydantic aliases for camelCase fields such as `apexDomain -> apex_domain`.
 
 ## Testing Guidelines
 
-Use `pytest`, `pytest-asyncio`, and `respx` for async and HTTP transport tests. Name files by feature area, for example `tests/test_auth.py` or `tests/test_retry.py`. The spec requires full public API coverage, so add direct tests for every exported method, exception mapping, and retry/auth edge case.
+Use `pytest`, `pytest-asyncio`, and `respx` for async and HTTP transport tests. Name files by feature area, for example `tests/test_submit.py` or `tests/test_errors.py`. Prefer shared fixtures from `tests/conftest.py` over inline sample payloads. The current US1 tests cover submit, result retrieval, auth, error mapping, and async context management; sync-context checks are intentionally deferred until `SyncClient` exists.
 
 ## Commit & Pull Request Guidelines
 
-Write short, imperative commit subjects such as `Add HTTP transport retry handling`. Keep commits scoped to a single task or coherent change. PRs should include a concise summary, references to the relevant spec or task IDs, and the exact verification commands you ran.
+Write short, imperative commit subjects such as `Add result polling tests`. Keep commits scoped to a single task or coherent change. Recent history follows task-based commits (`T010`, `T011`, etc.); continuing that pattern is preferred. PRs should include a concise summary, references to the relevant spec/task IDs, and the exact verification commands you ran.
 
 ## Security & Configuration Tips
 
