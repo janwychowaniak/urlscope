@@ -2,33 +2,34 @@
 
 ## Project Structure & Module Organization
 
-This repository is currently spec-first. Product requirements and implementation planning live under `specs/001-urlscan-api-wrapper/`, including `spec.md`, `plan.md`, `tasks.md`, and `quickstart.md`. The planned Python package layout is `src/urlscope/` for library code and `tests/` for pytest coverage. Keep new implementation files aligned with the structure defined in `plan.md`: transport in `_http.py`, clients in `_client.py` and `_sync.py`, and Pydantic models in `models/`.
+This repository uses a `src/` layout for the `urlscope` Python package. Library code lives in `src/urlscope/`, with internal modules such as `_exceptions.py` and `_http.py`. Reserve `src/urlscope/models/` for Pydantic response models. Put tests in `tests/`. Product requirements, contracts, and task sequencing live under `specs/001-urlscan-api-wrapper/`; treat those files as the source of truth before changing public behavior.
 
 ## Build, Test, and Development Commands
 
-Use the commands defined in the spec documents once scaffolding is added:
+Use the managed virtual environment:
 
 ```bash
-pip install -e ".[dev]"
-pytest tests/
-ruff check src/ tests/
-mypy src/
+uv sync --extra dev
+.venv/bin/python -c "import urlscope"
+.venv/bin/pytest tests/
+.venv/bin/ruff check src/ tests/
+.venv/bin/mypy src/
 ```
 
-`pip install -e ".[dev]"` installs the package and developer tooling. `pytest` runs the full test suite. `ruff check` enforces linting. `mypy` must pass in strict mode. For a quick import check, use `python -c "import urlscope"`.
+`uv sync --extra dev` installs runtime and dev dependencies into `.venv`. The import check confirms packaging works. Run `pytest` for tests, `ruff` for linting, and `mypy` in strict mode before opening a PR.
 
 ## Coding Style & Naming Conventions
 
-Target Python 3.10+ with full type annotations. Follow the planned `src/` layout and keep public exports centralized in `src/urlscope/__init__.py`. Use `snake_case` for modules, functions, and variables, `PascalCase` for classes, and leading underscores for internal modules such as `_exceptions.py`. Pydantic models should preserve API compatibility with aliases for upstream camelCase fields where needed.
+Target Python 3.10+ and keep type annotations complete. Use `snake_case` for modules, functions, and variables; `PascalCase` for classes; and `_`-prefixed module names for internal implementation details. Keep public exports centralized in `src/urlscope/__init__.py`. Follow the contract docs when naming API-facing classes and exceptions.
 
 ## Testing Guidelines
 
-Use `pytest`, `pytest-asyncio`, and `respx` for HTTP mocking. Place tests in `tests/` with filenames matching the feature area, for example `test_submit.py` or `test_retry.py`. The spec requires 100% public API coverage, so every exported client method, model surface, and exception path needs direct tests.
+Use `pytest`, `pytest-asyncio`, and `respx` for async and HTTP transport tests. Name files by feature area, for example `tests/test_auth.py` or `tests/test_retry.py`. The spec requires full public API coverage, so add direct tests for every exported method, exception mapping, and retry/auth edge case.
 
 ## Commit & Pull Request Guidelines
 
-Git history currently contains only `Initial commit`, so use short, imperative commit subjects such as `Add async client retry handling`. Keep commits focused and logically grouped. Pull requests should include a concise summary, linked issue or spec section, test evidence (`pytest`, `ruff`, `mypy`), and sample request/response snippets when API behavior changes.
+Write short, imperative commit subjects such as `Add HTTP transport retry handling`. Keep commits scoped to a single task or coherent change. PRs should include a concise summary, references to the relevant spec or task IDs, and the exact verification commands you ran.
 
 ## Security & Configuration Tips
 
-Do not hardcode secrets. Read the API key from `URLSCAN_API_KEY` or pass it explicitly at runtime. Keep example values obviously fake, and avoid committing live credentials, scan data, or generated artifacts.
+Never commit real API keys. Use `URLSCAN_API_KEY` for local development or pass credentials explicitly at runtime. Keep fixtures and examples sanitized, and avoid checking in captured scan artifacts or sensitive response payloads.
