@@ -83,10 +83,7 @@ async def test_search_pagination_via_search_after(
 
     assert isinstance(response, SearchResponse)
     assert route.calls.last is not None
-    assert route.calls.last.request.url.params.get_list("search_after") == [
-        "1742120000",
-        "scan-123",
-    ]
+    assert route.calls.last.request.url.params["search_after"] == "1742120000,scan-123"
 
 
 @pytest.mark.asyncio

@@ -82,7 +82,7 @@ class UrlscopeClient:
             "size": size,
         }
         if search_after is not None:
-            params["search_after"] = search_after
+            params["search_after"] = ",".join(str(value) for value in search_after)
 
         response = await self._transport._request(
             "GET",
