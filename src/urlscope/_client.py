@@ -5,7 +5,7 @@ from typing import Any, Literal
 
 from ._exceptions import NotFoundError, ScanDeletedError, ScanTimeoutError
 from ._http import _HTTPTransport
-from .models import ScanResult, SubmissionResponse
+from .models import ScanResult, SearchResponse, SubmissionResponse
 
 LOGGER = logging.getLogger("urlscope")
 
@@ -69,6 +69,27 @@ class UrlscopeClient:
     async def get_result(self, uuid: str) -> ScanResult:
         response = await self._transport._request("GET", f"/api/v1/result/{uuid}/")
         return ScanResult.model_validate(response.json())
+
+    async def search(
+        self,
+        query: str = "*",
+        *,
+        size: int = 100,
+        search_after: list[Any] | None = None,
+    ) -> SearchResponse:
+        params: dict[str, Any] = {
+            "q": query,
+            "size": size,
+        }
+        if search_after is not None:
+            params["search_after"] = search_after
+
+        response = await self._transport._request(
+            "GET",
+            "/api/v1/search/",
+            params=params,
+        )
+        return SearchResponse.model_validate(response.json())
 
     async def submit_and_wait(
         self,

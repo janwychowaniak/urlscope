@@ -1,3 +1,4 @@
+from ._search import SearchResponse, SearchResultItem
 from ._result import (
     BrandMatch,
     CertificateInfo,
@@ -18,4 +19,6 @@ __all__ = [
     "BrandMatch",
     "ScanLists",
     "CertificateInfo",
+    "SearchResponse",
+    "SearchResultItem",
 ]
