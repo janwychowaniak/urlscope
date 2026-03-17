@@ -1,7 +1,13 @@
 import httpx
 import pytest
 
-from urlscope import QuotaInfo, ScanResult, SearchResponse, SubmissionResponse, SyncClient
+from urlscope import (
+    QuotaInfo,
+    ScanResult,
+    SearchResponse,
+    SubmissionResponse,
+    SyncClient,
+)
 from urlscope._client import UrlscopeClient
 
 

@@ -100,10 +100,18 @@ async def test_multiple_429s_then_200_succeeds(
 
     route = respx_mock.get(f"{test_base_url}/api/v1/result/scan-123/").mock(
         side_effect=[
-            httpx.Response(429, headers={"X-Rate-Limit-Reset-After": "0"}, json={"message": "retry"}),
-            httpx.Response(429, headers={"X-Rate-Limit-Reset-After": "0"}, json={"message": "retry"}),
+            httpx.Response(
+                429,
+                headers={"X-Rate-Limit-Reset-After": "0"},
+                json={"message": "retry"},
+            ),
+            httpx.Response(
+                429,
+                headers={"X-Rate-Limit-Reset-After": "0"},
+                json={"message": "retry"},
+            ),
             httpx.Response(200, json=scan_result_json),
-        ]
+        ],
     )
 
     async with UrlscopeClient(

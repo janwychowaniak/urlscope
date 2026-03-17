@@ -1,5 +1,4 @@
 from ._quota import QuotaInfo, QuotaWindow
-from ._search import SearchResponse, SearchResultItem
 from ._result import (
     BrandMatch,
     CertificateInfo,
@@ -9,6 +8,7 @@ from ._result import (
     TaskInfo,
     Verdicts,
 )
+from ._search import SearchResponse, SearchResultItem
 from ._submission import SubmissionResponse
 
 __all__ = [

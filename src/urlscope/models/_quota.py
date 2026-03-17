@@ -34,7 +34,6 @@ class QuotaInfo(BaseModel):
     limits: dict[str, Any]
 
     @computed_field
-    @property
     def quotas(self) -> list[QuotaWindow]:
         windows: list[QuotaWindow] = []
 

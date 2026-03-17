@@ -18,7 +18,10 @@ def test_base_url() -> str:
 
 
 @pytest_asyncio.fixture
-async def mock_client(api_key: str, test_base_url: str) -> AsyncIterator[UrlscopeClient]:
+async def mock_client(
+    api_key: str,
+    test_base_url: str,
+) -> AsyncIterator[UrlscopeClient]:
     async with UrlscopeClient(api_key=api_key, base_url=test_base_url) as client:
         yield client
 

@@ -101,7 +101,9 @@ async def test_search_empty_query_defaults_to_wildcard(
 
     assert isinstance(response, SearchResponse)
     assert route.calls.last is not None
-    assert str(route.calls.last.request.url) == f"{test_base_url}/api/v1/search/?q=%2A&size=100"
+    assert str(route.calls.last.request.url) == (
+        f"{test_base_url}/api/v1/search/?q=%2A&size=100"
+    )
 
 
 @pytest.mark.asyncio
