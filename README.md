@@ -61,6 +61,7 @@ async def main() -> None:
         for item in response.results:
             print(item.id, item.page.get("url") if item.page else None)
 
+        # Cursor-based pagination is handled via the previous item's sort key.
         if response.has_more and response.results and response.results[-1].sort:
             next_page = await client.search(
                 "domain:example.com",
@@ -68,6 +69,40 @@ async def main() -> None:
                 search_after=response.results[-1].sort,
             )
             print(len(next_page.results))
+
+
+asyncio.run(main())
+```
+
+### Download artifacts
+
+```python
+import asyncio
+from urlscope import UrlscopeClient
+
+
+async def main() -> None:
+    async with UrlscopeClient() as client:
+        screenshot = await client.get_screenshot("scan-uuid-here")
+        dom = await client.get_dom("scan-uuid-here")
+        print(len(screenshot), len(dom))
+
+
+asyncio.run(main())
+```
+
+### Check quotas
+
+```python
+import asyncio
+from urlscope import UrlscopeClient
+
+
+async def main() -> None:
+    async with UrlscopeClient() as client:
+        quotas = await client.get_quotas()
+        for q in quotas.quotas[:5]:
+            print(q.scope, q.action, q.window, q.remaining, q.limit)
 
 
 asyncio.run(main())
