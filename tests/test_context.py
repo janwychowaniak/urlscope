@@ -34,22 +34,16 @@ async def test_double_close_does_not_raise(api_key: str) -> None:
     assert client._transport._client.is_closed
 
 
-SYNC_CLIENT_MISSING = not hasattr(urlscope, "SyncClient")
-
-
-@pytest.mark.skipif(SYNC_CLIENT_MISSING, reason="SyncClient is implemented in T025")
 def test_sync_client_works_as_context_manager(api_key: str) -> None:
     with urlscope.SyncClient(api_key=api_key) as client:
         assert client is not None
 
 
-@pytest.mark.skipif(SYNC_CLIENT_MISSING, reason="SyncClient is implemented in T025")
 def test_sync_client_exit_does_not_raise(api_key: str) -> None:
     with urlscope.SyncClient(api_key=api_key) as client:
         assert client is not None
 
 
-@pytest.mark.skipif(SYNC_CLIENT_MISSING, reason="SyncClient is implemented in T025")
 def test_sync_client_close_is_callable_without_error(api_key: str) -> None:
     client = urlscope.SyncClient(api_key=api_key)
 

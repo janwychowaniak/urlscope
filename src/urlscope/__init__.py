@@ -9,6 +9,7 @@ from ._exceptions import (
     UrlscopeError,
     ValidationError,
 )
+from ._sync import SyncClient
 from .models import (
     BrandMatch,
     CertificateInfo,
@@ -28,6 +29,7 @@ __version__ = "0.1.0"
 
 __all__ = [
     "UrlscopeClient",
+    "SyncClient",
     "SubmissionResponse",
     "ScanResult",
     "TaskInfo",
