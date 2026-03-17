@@ -5,7 +5,7 @@ from typing import Any, Literal
 
 from ._exceptions import NotFoundError, ScanDeletedError, ScanTimeoutError
 from ._http import _HTTPTransport
-from .models import ScanResult, SearchResponse, SubmissionResponse
+from .models import QuotaInfo, ScanResult, SearchResponse, SubmissionResponse
 
 LOGGER = logging.getLogger("urlscope")
 
@@ -98,6 +98,10 @@ class UrlscopeClient:
     async def get_dom(self, uuid: str) -> str:
         response = await self._transport._request("GET", f"/dom/{uuid}/")
         return response.text
+
+    async def get_quotas(self) -> QuotaInfo:
+        response = await self._transport._request("GET", "/user/quotas/")
+        return QuotaInfo.model_validate(response.json())
 
     async def submit_and_wait(
         self,

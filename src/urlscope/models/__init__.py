@@ -1,3 +1,4 @@
+from ._quota import QuotaInfo, QuotaWindow
 from ._search import SearchResponse, SearchResultItem
 from ._result import (
     BrandMatch,
@@ -21,4 +22,6 @@ __all__ = [
     "CertificateInfo",
     "SearchResponse",
     "SearchResultItem",
+    "QuotaInfo",
+    "QuotaWindow",
 ]
