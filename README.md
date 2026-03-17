@@ -1,1 +1,123 @@
 # urlscope
+
+`urlscope` is an async-first Python wrapper for the urlscan.io API. It provides typed Pydantic models for common API responses, automatic API key handling, built-in retry logic for rate limits, and a sync convenience wrapper for scripts.
+
+## Installation
+
+```bash
+pip install urlscope
+```
+
+Set your API key before making requests:
+
+```bash
+export URLSCAN_API_KEY="your-api-key-here"
+```
+
+## Quickstart
+
+### Async submit and wait
+
+```python
+import asyncio
+from urlscope import UrlscopeClient
+
+
+async def main() -> None:
+    async with UrlscopeClient() as client:
+        result = await client.submit_and_wait(
+            "https://example.com",
+            visibility="public",
+        )
+        print(result.task.uuid)
+        print(result.page.url)
+        print(result.verdicts.score if result.verdicts else None)
+
+
+asyncio.run(main())
+```
+
+### Sync usage
+
+```python
+from urlscope import SyncClient
+
+
+with SyncClient() as client:
+    result = client.get_result("scan-uuid-here")
+    print(result.page.url)
+```
+
+### Search
+
+```python
+import asyncio
+from urlscope import UrlscopeClient
+
+
+async def main() -> None:
+    async with UrlscopeClient() as client:
+        response = await client.search("domain:example.com", size=10)
+        for item in response.results:
+            print(item.id, item.page.get("url") if item.page else None)
+
+        if response.has_more and response.results and response.results[-1].sort:
+            next_page = await client.search(
+                "domain:example.com",
+                size=10,
+                search_after=response.results[-1].sort,
+            )
+            print(len(next_page.results))
+
+
+asyncio.run(main())
+```
+
+### Error handling
+
+```python
+import asyncio
+from urlscope import RateLimitError, ScanTimeoutError, UrlscopeClient
+
+
+async def main() -> None:
+    async with UrlscopeClient() as client:
+        try:
+            await client.submit_and_wait("https://example.com", poll_timeout=120.0)
+        except ScanTimeoutError as exc:
+            print(exc.uuid)
+        except RateLimitError as exc:
+            print(exc.retry_after, exc.scope, exc.window)
+
+
+asyncio.run(main())
+```
+
+## API Reference
+
+Primary clients:
+
+- `UrlscopeClient`: async interface for submit, result retrieval, polling, search, artifacts, and quotas
+- `SyncClient`: sync wrapper with the same method surface for scripts and simple integrations
+
+Key response models:
+
+- `SubmissionResponse`
+- `ScanResult`, `TaskInfo`, `PageInfo`, `Verdicts`, `BrandMatch`, `ScanLists`, `CertificateInfo`
+- `SearchResponse`, `SearchResultItem`
+- `QuotaInfo`, `QuotaWindow`
+
+Key exceptions:
+
+- `UrlscopeError`
+- `AuthenticationError`
+- `ValidationError`
+- `NotFoundError`
+- `ScanDeletedError`
+- `RateLimitError`
+- `ScanTimeoutError`
+- `APIError`
+
+## License
+
+MIT
