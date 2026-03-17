@@ -91,6 +91,14 @@ class UrlscopeClient:
         )
         return SearchResponse.model_validate(response.json())
 
+    async def get_screenshot(self, uuid: str) -> bytes:
+        response = await self._transport._request("GET", f"/screenshots/{uuid}.png")
+        return response.content
+
+    async def get_dom(self, uuid: str) -> str:
+        response = await self._transport._request("GET", f"/dom/{uuid}/")
+        return response.text
+
     async def submit_and_wait(
         self,
         url: str,
