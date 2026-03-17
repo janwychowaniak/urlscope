@@ -100,7 +100,7 @@ class UrlscopeClient:
         return response.text
 
     async def get_quotas(self) -> QuotaInfo:
-        response = await self._transport._request("GET", "/user/quotas/")
+        response = await self._transport._request("GET", "/api/v1/quotas")
         return QuotaInfo.model_validate(response.json())
 
     async def submit_and_wait(

@@ -160,24 +160,27 @@ Individual item within search results.
 
 ## Entity: QuotaInfo
 
-Returned from `GET /user/quotas/`.
+Returned from `GET /api/v1/quotas`.
 
-| Field   | Type              | Required | Notes                          |
-|---------|-------------------|----------|--------------------------------|
-| quotas  | list[QuotaWindow] | Yes      | Rate limit info per window     |
+| Field   | Type           | Required | Notes                                                     |
+|---------|----------------|----------|-----------------------------------------------------------|
+| scope   | str            | No       | Top-level quota scope; live API currently returns `scope` |
+| limits  | dict           | Yes      | Raw quota structure from urlscan                          |
+| quotas  | list[QuotaWindow] | Yes   | Computed flattened convenience view of minute/hour/day windows |
 
 ### Sub-entity: QuotaWindow
 
 | Field     | Type   | Required | Notes                          |
 |-----------|--------|----------|--------------------------------|
-| scope     | str    | Yes      | "user" or "ip-address"         |
+| scope     | str    | No       | Copied from top-level quota scope |
 | action    | str    | Yes      | "search", "public", etc.       |
 | window    | str    | Yes      | "minute", "hour", "day"        |
 | limit     | int    | Yes      | Maximum requests allowed       |
-| remaining | int    | Yes      | Remaining in current window    |
-| reset     | str    | No       | ISO-8601 reset timestamp       |
+| used      | int    | No       | Requests already used          |
+| remaining | int    | No       | Remaining in current window    |
+| percent   | float  | No       | Percentage of window consumed  |
 
-**Note**: Exact quota response structure will be confirmed during implementation. `extra="allow"` provides forward compatibility.
+**Note**: urlscan's live quota response is nested under `limits`. The library preserves that raw structure in `QuotaInfo.limits` and also exposes a flattened `QuotaInfo.quotas` convenience list for iterating per action/window.
 
 ## Entity Relationships
 

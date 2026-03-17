@@ -180,6 +180,7 @@ A developer writing a simple script or working in a synchronous context wants to
 - **Scan Result**: The full result of a completed scan. Common top-level sections (task, page, verdicts, stats, certificates, resource lists) are modeled with typed fields. The complete raw response dict is also exposed for ad-hoc access to less common or newly-added fields.
 - **Search Result**: A collection of scan summaries returned from a search query, with pagination metadata (total count, has_more flag).
 - **Search Result Item**: An individual scan summary within search results, containing page info, task info, and statistics.
+- **Quota Info**: The account quota response returned by urlscan, preserving the raw nested `limits` structure while also exposing a flattened list of per-action/per-window quota entries for convenience.
 - **Account Quota**: Current API usage and limits across time windows (minute, hour, day) for the authenticated user.
 
 ## Success Criteria *(mandatory)*
