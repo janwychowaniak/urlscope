@@ -1,0 +1,154 @@
+{
+  "task": {
+    "uuid": "scored-scan-123",
+    "url": "https://review.example.test/",
+    "domain": "review.example.test",
+    "apexDomain": "example.test",
+    "time": "2026-03-15T10:05:00+00:00",
+    "method": "api",
+    "visibility": "public",
+    "source": "api",
+    "reportURL": "https://urlscan.io/result/scored-scan-123/",
+    "screenshotURL": "https://urlscan.io/screenshots/scored-scan-123.png",
+    "domURL": "https://urlscan.io/dom/scored-scan-123/",
+    "tags": [
+      "investigation"
+    ],
+    "options": {}
+  },
+  "page": {
+    "url": "https://review.example.test/login",
+    "domain": "review.example.test",
+    "apexDomain": "example.test",
+    "domainAgeDays": 60,
+    "apexDomainAgeDays": 365,
+    "ip": "198.51.100.20",
+    "asn": "13335",
+    "asnname": "CLOUDFLARENET",
+    "country": "DE",
+    "city": "Frankfurt am Main",
+    "language": "de",
+    "server": "cloudflare",
+    "title": "Account Verification",
+    "status": "200",
+    "mimeType": "text/html",
+    "tlsIssuer": "Example Intermediate",
+    "tlsValidFrom": "2026-02-01T00:00:00+00:00",
+    "tlsValidDays": 90,
+    "tlsAgeDays": 40,
+    "umbrellaRank": 5000,
+    "redirected": "https://review.example.test/login"
+  },
+  "verdicts": {
+    "overall": {
+      "score": 60,
+      "categories": [
+        "suspicious"
+      ],
+      "brands": [
+        "examplebrand"
+      ],
+      "tags": [
+        "review"
+      ],
+      "malicious": true,
+      "hasVerdicts": true
+    },
+    "urlscan": {
+      "score": 60,
+      "categories": [
+        "suspicious"
+      ],
+      "brands": [
+        {
+          "key": "examplebrand",
+          "name": "Example Brand",
+          "country": [
+            "de"
+          ],
+          "vertical": [
+            "Finance"
+          ]
+        }
+      ],
+      "tags": [
+        "review"
+      ],
+      "malicious": true,
+      "hasVerdicts": true
+    },
+    "engines": {
+      "score": 40,
+      "malicious": true,
+      "categories": [],
+      "enginesTotal": 4,
+      "maliciousTotal": 2,
+      "benignTotal": 1,
+      "maliciousVerdicts": [
+        "engine-a",
+        "engine-b"
+      ],
+      "benignVerdicts": [
+        "engine-c"
+      ],
+      "hasVerdicts": true,
+      "tags": [
+        "ml"
+      ]
+    },
+    "community": {
+      "score": 0,
+      "categories": [],
+      "brands": [],
+      "votesTotal": 1,
+      "votesMalicious": 1,
+      "votesBenign": 0,
+      "malicious": true,
+      "hasVerdicts": true
+    }
+  },
+  "stats": {
+    "requests": 11,
+    "uniqIPs": 2
+  },
+  "lists": {
+    "ips": [
+      "198.51.100.20"
+    ],
+    "domains": [
+      "review.example.test"
+    ],
+    "urls": [
+      "https://review.example.test/login"
+    ],
+    "countries": [
+      "DE"
+    ],
+    "asns": [
+      13335
+    ],
+    "servers": [
+      "cloudflare"
+    ],
+    "hashes": [
+      "def456"
+    ],
+    "certificates": [
+      {
+        "subjectName": "review.example.test",
+        "issuer": "Example Intermediate",
+        "validFrom": 1769904000,
+        "validTo": 1777680000
+      }
+    ],
+    "linkDomains": [
+      "static.example.test"
+    ]
+  },
+  "data": {
+    "cookies": []
+  },
+  "meta": {
+    "processors": []
+  }
+}

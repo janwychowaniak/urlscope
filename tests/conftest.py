@@ -1,10 +1,18 @@
+import json
 from collections.abc import AsyncIterator
+from pathlib import Path
 
 import httpx
 import pytest
 import pytest_asyncio
 
 from urlscope import UrlscopeClient
+
+FIXTURE_DIR = Path(__file__).parent / "fixtures"
+
+
+def _load_json_fixture(name: str) -> dict[str, object]:
+    return json.loads((FIXTURE_DIR / name).read_text())
 
 
 @pytest.fixture
@@ -45,85 +53,17 @@ def submission_response_json() -> dict[str, object]:
 
 @pytest.fixture
 def scan_result_json() -> dict[str, object]:
-    return {
-        "task": {
-            "uuid": "scan-123",
-            "url": "https://example.com",
-            "domain": "example.com",
-            "apexDomain": "example.com",
-            "time": "2026-03-15T10:00:00+00:00",
-            "method": "api",
-            "visibility": "public",
-            "tags": ["investigation"],
-            "options": {
-                "customagent": "ExampleAgent/1.0",
-                "overrideSafety": True,
-            },
-        },
-        "page": {
-            "url": "https://example.com/landing",
-            "domain": "example.com",
-            "apexDomain": "example.com",
-            "ip": "93.184.216.34",
-            "asn": "15133",
-            "asnname": "EDGECAST",
-            "country": "US",
-            "city": "Los Angeles",
-            "server": "ECS",
-            "title": "Example Domain",
-            "status": "200",
-            "mimeType": "text/html",
-            "tlsIssuer": "Example Test CA",
-            "tlsValidFrom": "2026-03-01T00:00:00+00:00",
-            "tlsValidDays": 90,
-            "tlsAgeDays": 14,
-            "umbrellaRank": 42,
-            "redirected": "https://example.com/landing",
-            "ptr": "edge.example.net",
-        },
-        "verdicts": {
-            "score": 5,
-            "categories": ["benign"],
-            "brands": [
-                {
-                    "key": "example",
-                    "name": "Example",
-                    "country": ["US"],
-                    "vertical": ["technology"],
-                }
-            ],
-            "malicious": False,
-        },
-        "stats": {
-            "requests": 7,
-            "uniqIPs": 1,
-        },
-        "lists": {
-            "ips": ["93.184.216.34"],
-            "domains": ["example.com"],
-            "urls": ["https://example.com/landing"],
-            "countries": ["US"],
-            "asns": [15133],
-            "servers": ["ECS"],
-            "hashes": ["abc123"],
-            "certificates": [
-                {
-                    "subject": "CN=example.com",
-                    "issuer": "Example Test CA",
-                    "validFrom": "2026-03-01T00:00:00+00:00",
-                    "validTo": "2026-06-01T00:00:00+00:00",
-                    "sanList": ["example.com", "www.example.com"],
-                }
-            ],
-            "linkDomains": ["cdn.example.com"],
-        },
-        "data": {
-            "cookies": [],
-        },
-        "meta": {
-            "processors": [],
-        },
-    }
+    return _load_json_fixture("result_malicious.json")
+
+
+@pytest.fixture
+def clean_scan_result_json() -> dict[str, object]:
+    return _load_json_fixture("result_clean.json")
+
+
+@pytest.fixture
+def scored_scan_result_json() -> dict[str, object]:
+    return _load_json_fixture("result_scored.json")
 
 
 @pytest.fixture

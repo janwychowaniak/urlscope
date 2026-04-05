@@ -44,7 +44,7 @@ Returned from `GET /api/v1/result/{uuid}/`. Partial typed model — common secti
 |----------|-----------------|----------|--------------------------------------|
 | task     | TaskInfo        | Yes      | Scan task metadata                   |
 | page     | PageInfo        | Yes      | Page-level information               |
-| verdicts | Verdicts        | No       | Maliciousness scoring and categories |
+| verdicts | Verdicts        | No       | Nested maliciousness verdicts from overall, urlscan, engines, and community sources |
 | stats    | dict            | No       | Computed stats (loosely typed)       |
 | lists    | ScanLists       | No       | Aggregated lists (IPs, domains, etc) |
 | data     | dict            | No       | Raw request/cookie/console data      |
@@ -63,6 +63,11 @@ Returned from `GET /api/v1/result/{uuid}/`. Partial typed model — common secti
 | time        | datetime   | Yes      | Scan creation timestamp (ISO-8601) |
 | method      | str        | No       | "api", "manual", or "automatic"    |
 | visibility  | str        | Yes      | Visibility level                   |
+| source      | str        | No       | Submission source reported by urlscan |
+| user_agent  | str        | No       | Reported user agent, if present    |
+| report_url  | str        | No       | Human-readable report URL          |
+| screenshot_url | str     | No       | Screenshot artifact URL            |
+| dom_url     | str        | No       | DOM artifact URL                   |
 | tags        | list[str]  | No       | User-supplied tags                 |
 | options     | dict       | No       | Scan options                       |
 
@@ -73,11 +78,14 @@ Returned from `GET /api/v1/result/{uuid}/`. Partial typed model — common secti
 | url            | str    | Yes      | Final page URL                 |
 | domain         | str    | No       | Page hostname                  |
 | apex_domain    | str    | No       | Second-level domain            |
+| domain_age_days | int   | No       | Domain age in days             |
+| apex_domain_age_days | int | No    | Registered domain age in days  |
 | ip             | str    | No       | Primary request IP             |
 | asn            | str    | No       | Autonomous System number       |
 | asnname        | str    | No       | AS name                        |
 | country        | str    | No       | GeoIP country                  |
 | city           | str    | No       | GeoIP city                     |
+| language       | str    | No       | Detected page language         |
 | server         | str    | No       | HTTP Server header             |
 | title          | str    | No       | Page title                     |
 | status         | str    | No       | HTTP status code (as string)   |
@@ -92,12 +100,62 @@ Returned from `GET /api/v1/result/{uuid}/`. Partial typed model — common secti
 
 ### Sub-entity: Verdicts
 
-| Field      | Type           | Required | Notes                              |
-|------------|----------------|----------|------------------------------------|
-| score      | int            | No       | Maliciousness score (-100 to 100)  |
-| categories | list[str]      | No       | Threat categories                  |
-| brands     | list[BrandMatch] | No     | Detected brand impersonation       |
-| malicious  | bool           | No       | Overall malicious verdict          |
+| Field      | Type                  | Required | Notes                                       |
+|------------|-----------------------|----------|---------------------------------------------|
+| overall    | VerdictGroup          | No       | Aggregated overall verdict summary          |
+| urlscan    | UrlscanVerdictGroup   | No       | urlscan-native verdict section              |
+| engines    | EnginesVerdictGroup   | No       | Third-party / ML engine verdict section     |
+| community  | CommunityVerdictGroup | No       | Community vote verdict section              |
+
+### Sub-entity: VerdictGroup
+
+| Field        | Type           | Required | Notes                              |
+|--------------|----------------|----------|------------------------------------|
+| score        | int            | No       | Verdict score (-100 to 100)        |
+| categories   | list[str]      | No       | Threat categories                  |
+| brands       | list[str]      | No       | Brand keys / names from summary    |
+| tags         | list[str]      | No       | Supplemental tags                  |
+| malicious    | bool           | No       | Whether the section marks malicious |
+| has_verdicts | bool           | No       | Whether verdict evidence exists    |
+
+### Sub-entity: UrlscanVerdictGroup
+
+| Field        | Type             | Required | Notes                                |
+|--------------|------------------|----------|--------------------------------------|
+| score        | int              | No       | urlscan-specific score               |
+| categories   | list[str]        | No       | urlscan categories                   |
+| brands       | list[BrandMatch] | No       | Detected brand impersonation matches |
+| tags         | list[str]        | No       | Supplemental tags                    |
+| malicious    | bool             | No       | Whether urlscan marks malicious      |
+| has_verdicts | bool             | No       | Whether verdict evidence exists      |
+
+### Sub-entity: EnginesVerdictGroup
+
+| Field              | Type      | Required | Notes                              |
+|--------------------|-----------|----------|------------------------------------|
+| score              | int       | No       | Engine aggregate score             |
+| malicious          | bool      | No       | Whether engines mark malicious     |
+| categories         | list[str] | No       | Engine categories                  |
+| engines_total      | int       | No       | Count of engines consulted         |
+| malicious_total    | int       | No       | Count of malicious engine verdicts |
+| benign_total       | int       | No       | Count of benign engine verdicts    |
+| malicious_verdicts | list      | No       | Raw malicious verdict entries      |
+| benign_verdicts    | list      | No       | Raw benign verdict entries         |
+| tags               | list[str] | No       | Supplemental tags                  |
+| has_verdicts       | bool      | No       | Whether verdict evidence exists    |
+
+### Sub-entity: CommunityVerdictGroup
+
+| Field            | Type      | Required | Notes                               |
+|------------------|-----------|----------|-------------------------------------|
+| score            | int       | No       | Community score                     |
+| categories       | list[str] | No       | Community categories                |
+| brands           | list[str] | No       | Community brand labels              |
+| malicious        | bool      | No       | Whether community marks malicious   |
+| has_verdicts     | bool      | No       | Whether community verdicts exist    |
+| votes_total      | int       | No       | Total votes                         |
+| votes_malicious  | int       | No       | Malicious votes                     |
+| votes_benign     | int       | No       | Benign votes                        |
 
 ### Sub-entity: BrandMatch
 
@@ -126,13 +184,13 @@ Returned from `GET /api/v1/result/{uuid}/`. Partial typed model — common secti
 
 | Field       | Type     | Required | Notes                           |
 |-------------|----------|----------|---------------------------------|
-| subject     | str      | No       | Certificate subject CN          |
+| subject_name | str     | No       | Certificate subject / CN        |
 | issuer      | str      | No       | Certificate issuer              |
-| valid_from  | datetime | No       | Valid-from date                 |
-| valid_to    | datetime | No       | Valid-to / expiry date          |
+| valid_from  | datetime | No       | Valid-from date, parsed from wire value |
+| valid_to    | datetime | No       | Valid-to / expiry date, parsed from wire value |
 | san_list    | list[str]| No       | Subject Alternative Names       |
 
-**Note**: Exact certificate field names will be confirmed against live API responses during implementation. `extra="allow"` ensures forward compatibility.
+**Note**: The live API uses `subjectName` on the wire and may return `validFrom` / `validTo` as epoch timestamps. The model normalizes those values into Pythonic fields while preserving extras for forward compatibility.
 
 ## Entity: SearchResponse
 
@@ -191,7 +249,11 @@ UrlscopeClient
   │     ├── .task → TaskInfo
   │     ├── .page → PageInfo
   │     ├── .verdicts → Verdicts
-  │     │     └── .brands → list[BrandMatch]
+  │     │     ├── .overall → VerdictGroup
+  │     │     ├── .urlscan → UrlscanVerdictGroup
+  │     │     │     └── .brands → list[BrandMatch]
+  │     │     ├── .engines → EnginesVerdictGroup
+  │     │     └── .community → CommunityVerdictGroup
   │     └── .lists → ScanLists
   │           └── .certificates → list[CertificateInfo]
   ├── submit_and_wait(url, ...) → ScanResult

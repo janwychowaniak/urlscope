@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import AliasChoices, BaseModel, ConfigDict, Field
 
 
 class TaskInfo(BaseModel):
@@ -14,6 +14,11 @@ class TaskInfo(BaseModel):
     time: datetime
     method: str | None = None
     visibility: str
+    source: str | None = None
+    user_agent: str | None = Field(default=None, alias="userAgent")
+    report_url: str | None = Field(default=None, alias="reportURL")
+    screenshot_url: str | None = Field(default=None, alias="screenshotURL")
+    dom_url: str | None = Field(default=None, alias="domURL")
     tags: list[str] | None = None
     options: dict[str, Any] | None = None
 
@@ -24,11 +29,17 @@ class PageInfo(BaseModel):
     url: str
     domain: str | None = None
     apex_domain: str | None = Field(default=None, alias="apexDomain")
+    domain_age_days: int | None = Field(default=None, alias="domainAgeDays")
+    apex_domain_age_days: int | None = Field(
+        default=None,
+        alias="apexDomainAgeDays",
+    )
     ip: str | None = None
     asn: str | None = None
     asnname: str | None = None
     country: str | None = None
     city: str | None = None
+    language: str | None = None
     server: str | None = None
     title: str | None = None
     status: str | None = None
@@ -51,19 +62,71 @@ class BrandMatch(BaseModel):
     vertical: list[str] | None = None
 
 
-class Verdicts(BaseModel):
+class VerdictGroup(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    score: int | None = None
+    categories: list[str] | None = None
+    brands: list[str] | None = None
+    tags: list[str] | None = None
+    malicious: bool | None = None
+    has_verdicts: bool | None = Field(default=None, alias="hasVerdicts")
+
+
+class UrlscanVerdictGroup(BaseModel):
     model_config = ConfigDict(extra="allow", populate_by_name=True)
 
     score: int | None = None
     categories: list[str] | None = None
     brands: list[BrandMatch] | None = None
+    tags: list[str] | None = None
     malicious: bool | None = None
+    has_verdicts: bool | None = Field(default=None, alias="hasVerdicts")
+
+
+class EnginesVerdictGroup(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    score: int | None = None
+    malicious: bool | None = None
+    categories: list[str] | None = None
+    engines_total: int | None = Field(default=None, alias="enginesTotal")
+    malicious_total: int | None = Field(default=None, alias="maliciousTotal")
+    benign_total: int | None = Field(default=None, alias="benignTotal")
+    malicious_verdicts: list[Any] | None = Field(
+        default=None,
+        alias="maliciousVerdicts",
+    )
+    benign_verdicts: list[Any] | None = Field(default=None, alias="benignVerdicts")
+    tags: list[str] | None = None
+    has_verdicts: bool | None = Field(default=None, alias="hasVerdicts")
+
+
+class CommunityVerdictGroup(VerdictGroup):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    votes_total: int | None = Field(default=None, alias="votesTotal")
+    votes_malicious: int | None = Field(default=None, alias="votesMalicious")
+    votes_benign: int | None = Field(default=None, alias="votesBenign")
+
+
+class Verdicts(BaseModel):
+    model_config = ConfigDict(extra="allow", populate_by_name=True)
+
+    overall: VerdictGroup | None = None
+    urlscan: UrlscanVerdictGroup | None = None
+    engines: EnginesVerdictGroup | None = None
+    community: CommunityVerdictGroup | None = None
 
 
 class CertificateInfo(BaseModel):
     model_config = ConfigDict(extra="allow", populate_by_name=True)
 
-    subject: str | None = None
+    subject_name: str | None = Field(
+        default=None,
+        alias="subjectName",
+        validation_alias=AliasChoices("subjectName", "subject"),
+    )
     issuer: str | None = None
     valid_from: datetime | None = Field(default=None, alias="validFrom")
     valid_to: datetime | None = Field(default=None, alias="validTo")

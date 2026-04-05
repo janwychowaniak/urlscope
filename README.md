@@ -35,9 +35,10 @@ async def main() -> None:
             "https://example.com",
             visibility="public",
         )
+        overall = result.verdicts.overall if result.verdicts else None
         print(result.task.uuid)
         print(result.page.url)
-        print(result.verdicts.score if result.verdicts else None)
+        print(overall.score if overall else None)
 
 
 asyncio.run(main())
@@ -150,6 +151,8 @@ Key response models:
 - `ScanResult`, `TaskInfo`, `PageInfo`, `Verdicts`, `BrandMatch`, `ScanLists`, `CertificateInfo`
 - `SearchResponse`, `SearchResultItem`
 - `QuotaInfo`, `QuotaWindow`
+
+`ScanResult.verdicts` follows the live urlscan structure with nested sections such as `overall`, `urlscan`, `engines`, and `community`. For example, use `result.verdicts.overall.score` for the top-level score.
 
 Key exceptions:
 

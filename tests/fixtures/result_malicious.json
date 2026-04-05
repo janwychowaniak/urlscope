@@ -1,0 +1,164 @@
+{
+  "task": {
+    "uuid": "scan-123",
+    "url": "https://malicious.example.test/oferta/session-token",
+    "domain": "malicious.example.test",
+    "apexDomain": "example.test",
+    "time": "2026-03-15T10:10:00+00:00",
+    "method": "api",
+    "visibility": "public",
+    "source": "api",
+    "reportURL": "https://urlscan.io/result/scan-123/",
+    "screenshotURL": "https://urlscan.io/screenshots/scan-123.png",
+    "domURL": "https://urlscan.io/dom/scan-123/",
+    "tags": [
+      "investigation"
+    ],
+    "options": {
+      "overrideSafety": true
+    }
+  },
+  "page": {
+    "url": "https://malicious.example.test/oferta/session-token",
+    "domain": "malicious.example.test",
+    "apexDomain": "example.test",
+    "domainAgeDays": 8,
+    "apexDomainAgeDays": 8,
+    "ip": "192.0.2.30",
+    "asn": "64500",
+    "asnname": "EXAMPLEHOST",
+    "country": "PL",
+    "city": "Warsaw",
+    "language": "pl",
+    "server": "nginx",
+    "title": "Payment Verification",
+    "status": "200",
+    "mimeType": "text/html",
+    "tlsIssuer": "WE1",
+    "tlsValidFrom": "2026-03-10T00:00:00+00:00",
+    "tlsValidDays": 90,
+    "tlsAgeDays": 5,
+    "umbrellaRank": 1000000,
+    "redirected": "https://malicious.example.test/oferta/session-token"
+  },
+  "verdicts": {
+    "overall": {
+      "score": 100,
+      "categories": [
+        "phishing"
+      ],
+      "brands": [
+        "allegrolokalnie",
+        "genericcloudflare"
+      ],
+      "tags": [
+        "phishing"
+      ],
+      "malicious": true,
+      "hasVerdicts": true
+    },
+    "urlscan": {
+      "score": 100,
+      "categories": [
+        "phishing"
+      ],
+      "brands": [
+        {
+          "country": [
+            "pl"
+          ],
+          "name": "Allegro Lokalnie",
+          "vertical": [
+            "E-commerce"
+          ],
+          "key": "allegrolokalnie"
+        },
+        {
+          "country": [
+            "us"
+          ],
+          "name": "Generic Cloudflare",
+          "vertical": [
+            "Online"
+          ],
+          "key": "genericcloudflare"
+        }
+      ],
+      "tags": [
+        "phishing"
+      ],
+      "malicious": true,
+      "hasVerdicts": true
+    },
+    "engines": {
+      "score": 100,
+      "malicious": true,
+      "categories": [],
+      "enginesTotal": 0,
+      "maliciousTotal": 0,
+      "benignTotal": 0,
+      "maliciousVerdicts": [],
+      "benignVerdicts": [],
+      "emergingSignal": "high",
+      "hasVerdicts": true,
+      "tags": [
+        "urlscan-ml",
+        "urlscan-ml-60c5e22"
+      ]
+    },
+    "community": {
+      "score": 0,
+      "categories": [],
+      "brands": [],
+      "votesTotal": 0,
+      "votesMalicious": 0,
+      "votesBenign": 0,
+      "malicious": false,
+      "hasVerdicts": false
+    }
+  },
+  "stats": {
+    "requests": 19,
+    "uniqIPs": 3
+  },
+  "lists": {
+    "ips": [
+      "192.0.2.30"
+    ],
+    "domains": [
+      "malicious.example.test"
+    ],
+    "urls": [
+      "https://malicious.example.test/oferta/session-token"
+    ],
+    "countries": [
+      "PL"
+    ],
+    "asns": [
+      64500
+    ],
+    "servers": [
+      "nginx"
+    ],
+    "hashes": [
+      "ghi789"
+    ],
+    "certificates": [
+      {
+        "subjectName": "malicious.example.test",
+        "issuer": "WE1",
+        "validFrom": 1773100800,
+        "validTo": 1780876800
+      }
+    ],
+    "linkDomains": [
+      "checkout.example.test"
+    ]
+  },
+  "data": {
+    "cookies": []
+  },
+  "meta": {
+    "processors": []
+  }
+}

@@ -19,9 +19,18 @@ async def test_get_result_with_valid_uuid_returns_scan_result(
 
     assert isinstance(result, ScanResult)
     assert result.task.uuid == "scan-123"
-    assert result.page.url == "https://example.com/landing"
+    assert result.task.report_url == "https://urlscan.io/result/scan-123/"
+    assert result.page.url == "https://malicious.example.test/oferta/session-token"
     assert result.verdicts is not None
-    assert result.verdicts.score == 5
+    assert result.verdicts.overall is not None
+    assert result.verdicts.overall.score == 100
+    assert result.verdicts.urlscan is not None
+    assert result.verdicts.urlscan.brands is not None
+    assert result.verdicts.urlscan.brands[0].key == "allegrolokalnie"
+    assert result.verdicts.engines is not None
+    assert result.verdicts.engines.malicious_total == 0
+    assert result.verdicts.community is not None
+    assert result.verdicts.community.votes_total == 0
 
 
 @pytest.mark.asyncio
@@ -133,3 +142,39 @@ async def test_submit_and_wait_raises_scan_deleted_error_during_poll(
             poll_interval=0,
             poll_timeout=1,
         )
+
+
+def test_scan_result_parses_multiple_live_shaped_fixtures(
+    clean_scan_result_json,
+    scored_scan_result_json,
+    scan_result_json,
+) -> None:
+    clean_result = ScanResult.model_validate(clean_scan_result_json)
+    scored_result = ScanResult.model_validate(scored_scan_result_json)
+    malicious_result = ScanResult.model_validate(scan_result_json)
+
+    assert clean_result.verdicts is not None
+    assert clean_result.verdicts.overall is not None
+    assert clean_result.verdicts.overall.score == 0
+
+    assert scored_result.verdicts is not None
+    assert scored_result.verdicts.overall is not None
+    assert scored_result.verdicts.overall.score == 60
+    assert scored_result.verdicts.urlscan is not None
+    assert scored_result.verdicts.urlscan.brands is not None
+    assert scored_result.verdicts.urlscan.brands[0].name == "Example Brand"
+
+    assert malicious_result.verdicts is not None
+    assert malicious_result.verdicts.engines is not None
+    assert malicious_result.verdicts.engines.tags == [
+        "urlscan-ml",
+        "urlscan-ml-60c5e22",
+    ]
+
+
+def test_scan_result_preserves_unmodeled_nested_fields(scan_result_json) -> None:
+    result = ScanResult.model_validate(scan_result_json)
+
+    assert result.verdicts is not None
+    assert result.verdicts.engines is not None
+    assert result.verdicts.engines.model_extra == {"emergingSignal": "high"}

@@ -1,0 +1,133 @@
+{
+  "task": {
+    "uuid": "clean-scan-123",
+    "url": "https://clean.example.test/",
+    "domain": "clean.example.test",
+    "apexDomain": "example.test",
+    "time": "2026-03-15T10:00:00+00:00",
+    "method": "api",
+    "visibility": "public",
+    "source": "api",
+    "reportURL": "https://urlscan.io/result/clean-scan-123/",
+    "screenshotURL": "https://urlscan.io/screenshots/clean-scan-123.png",
+    "domURL": "https://urlscan.io/dom/clean-scan-123/",
+    "tags": [
+      "investigation"
+    ],
+    "options": {
+      "customagent": "ExampleAgent/1.0"
+    }
+  },
+  "page": {
+    "url": "https://clean.example.test/",
+    "domain": "clean.example.test",
+    "apexDomain": "example.test",
+    "domainAgeDays": 365,
+    "apexDomainAgeDays": 365,
+    "ip": "203.0.113.10",
+    "asn": "15133",
+    "asnname": "EDGECAST",
+    "country": "US",
+    "city": "Los Angeles",
+    "language": "en",
+    "server": "ECS",
+    "title": "Clean Example",
+    "status": "200",
+    "mimeType": "text/html",
+    "tlsIssuer": "Example Test CA",
+    "tlsValidFrom": "2026-03-01T00:00:00+00:00",
+    "tlsValidDays": 90,
+    "tlsAgeDays": 14,
+    "umbrellaRank": 42,
+    "redirected": "https://clean.example.test/",
+    "ptr": "edge.example.net"
+  },
+  "verdicts": {
+    "overall": {
+      "score": 0,
+      "categories": [],
+      "brands": [],
+      "tags": [],
+      "malicious": false,
+      "hasVerdicts": false
+    },
+    "urlscan": {
+      "score": 0,
+      "categories": [],
+      "brands": [],
+      "tags": [],
+      "malicious": false,
+      "hasVerdicts": false
+    },
+    "engines": {
+      "score": 0,
+      "malicious": false,
+      "categories": [],
+      "enginesTotal": 0,
+      "maliciousTotal": 0,
+      "benignTotal": 0,
+      "maliciousVerdicts": [],
+      "benignVerdicts": [],
+      "hasVerdicts": false,
+      "tags": []
+    },
+    "community": {
+      "score": 0,
+      "categories": [],
+      "brands": [],
+      "votesTotal": 0,
+      "votesMalicious": 0,
+      "votesBenign": 0,
+      "malicious": false,
+      "hasVerdicts": false
+    }
+  },
+  "stats": {
+    "requests": 4,
+    "uniqIPs": 1
+  },
+  "lists": {
+    "ips": [
+      "203.0.113.10"
+    ],
+    "domains": [
+      "clean.example.test"
+    ],
+    "urls": [
+      "https://clean.example.test/"
+    ],
+    "countries": [
+      "US"
+    ],
+    "asns": [
+      15133
+    ],
+    "servers": [
+      "ECS"
+    ],
+    "hashes": [
+      "abc123"
+    ],
+    "certificates": [
+      {
+        "subjectName": "clean.example.test",
+        "issuer": "Example Test CA",
+        "validFrom": 1772323200,
+        "validTo": 1780099200,
+        "sanList": [
+          "clean.example.test",
+          "www.clean.example.test"
+        ]
+      }
+    ],
+    "linkDomains": [
+      "cdn.example.test"
+    ]
+  },
+  "data": {
+    "cookies": []
+  },
+  "meta": {
+    "processors": []
+  }
+}

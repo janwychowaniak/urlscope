@@ -30,7 +30,8 @@ from urlscope import UrlscopeClient
 async def main():
     async with UrlscopeClient() as client:
         result = await client.submit_and_wait("https://example.com", visibility="public")
-        print(f"Score: {result.verdicts.score}")
+        overall = result.verdicts.overall if result.verdicts else None
+        print(f"Overall score: {overall.score if overall else None}")
         print(f"Page title: {result.page.title}")
         print(f"IPs contacted: {result.lists.ips}")
 
@@ -95,7 +96,8 @@ from urlscope import SyncClient
 
 with SyncClient() as client:
     result = client.submit_and_wait("https://example.com")
-    print(f"Score: {result.verdicts.score}")
+    overall = result.verdicts.overall if result.verdicts else None
+    print(f"Overall score: {overall.score if overall else None}")
 ```
 
 All async methods have sync equivalents with the same signature (minus `await`).

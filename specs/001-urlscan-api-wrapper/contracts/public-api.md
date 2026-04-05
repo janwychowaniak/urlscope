@@ -36,6 +36,8 @@ urlscope.ScanTimeoutError     # Polling timeout exceeded
 urlscope.APIError             # Other HTTP errors from API
 ```
 
+`Verdicts` mirrors the live nested urlscan result structure. Users should access verdict data through sections such as `result.verdicts.overall.score` and `result.verdicts.urlscan.brands`.
+
 **Typing imports**: `from typing import Any, Literal, Self`
 
 ## UrlscopeClient (async)

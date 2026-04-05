@@ -58,5 +58,7 @@ def test_certificate_chain_accessible_from_scan_result_model(
     assert result.lists is not None
     assert result.lists.certificates is not None
     assert len(result.lists.certificates) == 1
-    assert result.lists.certificates[0].subject == "CN=example.com"
-    assert result.lists.certificates[0].issuer == "Example Test CA"
+    assert result.lists.certificates[0].subject_name == "malicious.example.test"
+    assert result.lists.certificates[0].issuer == "WE1"
+    assert result.lists.certificates[0].valid_from is not None
+    assert result.lists.certificates[0].valid_from.year == 2026
