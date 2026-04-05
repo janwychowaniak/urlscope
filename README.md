@@ -8,6 +8,12 @@
 pip install urlscope
 ```
 
+If you want to install the current prerelease from PyPI, use:
+
+```bash
+pip install --pre urlscope
+```
+
 Set your API key before making requests:
 
 ```bash
@@ -101,12 +107,15 @@ from urlscope import UrlscopeClient
 async def main() -> None:
     async with UrlscopeClient() as client:
         quotas = await client.get_quotas()
+        print(quotas.scope)
         for q in quotas.quotas[:5]:
-            print(q.scope, q.action, q.window, q.remaining, q.limit)
+            print(q.scope, q.action, q.window, q.used, q.remaining, q.limit)
 
 
 asyncio.run(main())
 ```
+
+The live quotas response is also available in raw form via `QuotaInfo.limits`.
 
 ### Error handling
 
@@ -152,6 +161,19 @@ Key exceptions:
 - `RateLimitError`
 - `ScanTimeoutError`
 - `APIError`
+
+## Development
+
+```bash
+uv sync --extra dev
+.venv/bin/pytest tests/
+.venv/bin/ruff check src/ tests/
+.venv/bin/mypy src/
+.venv/bin/python -m build
+.venv/bin/python -m twine check dist/*
+```
+
+The package version is defined in `src/urlscope/__init__.py` and read dynamically by Hatchling during builds.
 
 ## License
 
