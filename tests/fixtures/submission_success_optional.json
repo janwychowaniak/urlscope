@@ -1,0 +1,15 @@
+{
+  "api": "https://urlscan.io/api/v1/result/019d789d-eb94-735c-98b9-bfbfc2f34e5e/",
+  "country": "de",
+  "message": "Submission successful",
+  "options": {
+    "headers": {
+      "referer": "https://example.com/ref"
+    },
+    "useragent": "urlscope-audit/1.0"
+  },
+  "result": "https://urlscan.io/result/019d789d-eb94-735c-98b9-bfbfc2f34e5e/",
+  "url": "https://en.wikipedia.org/wiki/Main_Page",
+  "uuid": "019d789d-eb94-735c-98b9-bfbfc2f34e5e",
+  "visibility": "public"
+}

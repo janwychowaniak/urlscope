@@ -138,6 +138,8 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
+`submit(..., override_safety=True)` is supported by the wrapper and is serialized to the current live urlscan wire format for `overrideSafety`.
+
 ## API Reference
 
 Primary clients:

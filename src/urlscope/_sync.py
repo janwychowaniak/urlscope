@@ -36,7 +36,7 @@ class SyncClient:
         tags: list[str] | None = None,
         custom_agent: str | None = None,
         referer: str | None = None,
-        override_safety: bool | None = None,
+        override_safety: bool | str | None = None,
         country: str | None = None,
     ) -> SubmissionResponse:
         async def _run() -> SubmissionResponse:
@@ -78,7 +78,7 @@ class SyncClient:
         tags: list[str] | None = None,
         custom_agent: str | None = None,
         referer: str | None = None,
-        override_safety: bool | None = None,
+        override_safety: bool | str | None = None,
         country: str | None = None,
         poll_interval: float = 5.0,
         initial_wait: float = 10.0,

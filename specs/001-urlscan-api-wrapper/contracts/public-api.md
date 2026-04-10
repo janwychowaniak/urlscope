@@ -67,7 +67,7 @@ class UrlscopeClient:
         tags: list[str] | None = None,
         custom_agent: str | None = None,
         referer: str | None = None,
-        override_safety: bool | None = None,
+        override_safety: bool | str | None = None,
         country: str | None = None,
     ) -> SubmissionResponse: ...
 
@@ -83,7 +83,7 @@ class UrlscopeClient:
         tags: list[str] | None = None,
         custom_agent: str | None = None,
         referer: str | None = None,
-        override_safety: bool | None = None,
+        override_safety: bool | str | None = None,
         country: str | None = None,
         poll_interval: float = 5.0,         # Seconds between polls
         initial_wait: float = 10.0,         # Wait before first poll
@@ -106,6 +106,8 @@ class UrlscopeClient:
     # Account
     async def get_quotas(self) -> QuotaInfo: ...
 ```
+
+`override_safety=True` is supported as a convenience and is serialized to the current live wire format (`"true"`).
 
 ## SyncClient
 
@@ -137,7 +139,7 @@ class SyncClient:
 ```
 UrlscopeError (base)
 ├── AuthenticationError    # HTTP 401/403
-├── ValidationError        # HTTP 400 (includes API message + description)
+├── ValidationError        # HTTP 400 (surfaces API message plus description/detail when available)
 ├── NotFoundError          # HTTP 404 (scan still pending or not found)
 ├── ScanDeletedError       # HTTP 410
 ├── RateLimitError         # HTTP 429 after max retries

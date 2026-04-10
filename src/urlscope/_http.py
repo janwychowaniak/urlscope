@@ -144,10 +144,37 @@ class _HTTPTransport:
             payload = None
 
         if isinstance(payload, dict):
-            for key in ("message", "description", "detail", "error"):
+            message = payload.get("message")
+            description = payload.get("description")
+            detail = payload.get("detail")
+
+            if isinstance(message, str) and message:
+                for extra in (description, detail):
+                    if isinstance(extra, str) and extra and extra != message:
+                        return f"{message}: {extra}"
+                return message
+
+            for key in ("description", "detail", "error"):
                 value = payload.get(key)
                 if isinstance(value, str) and value:
                     return value
+
+            errors = payload.get("errors")
+            if isinstance(errors, list):
+                for error in errors:
+                    if not isinstance(error, dict):
+                        continue
+
+                    title = error.get("title")
+                    for key in ("description", "detail"):
+                        value = error.get(key)
+                        if isinstance(value, str) and value:
+                            if isinstance(title, str) and title and title != value:
+                                return f"{title}: {value}"
+                            return value
+
+                    if isinstance(title, str) and title:
+                        return title
 
         if response.text:
             return response.text

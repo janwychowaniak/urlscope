@@ -16,7 +16,7 @@ Internal model for building the POST body to `POST /api/v1/scan/`.
 | custom_agent     | str                               | No       | Override browser User-Agent                |
 | referer          | str                               | No       | Override HTTP Referer                      |
 | tags             | list[str]                         | No       | Max 10 items, validated client-side        |
-| override_safety  | bool                              | No       | Disable PII reclassification               |
+| override_safety  | bool \| str                       | No       | Disable PII reclassification; wrapper serializes `True` as `"true"` for the current live API |
 | country          | str                               | No       | ISO 3166-1 alpha-2 country code            |
 
 **Validation**: `tags` length <= 10 (raises `ValueError` before request).
@@ -34,7 +34,9 @@ Returned from `POST /api/v1/scan/`.
 | visibility | str    | Yes      | Confirmed visibility level         |
 | url        | str    | Yes      | Submitted URL                      |
 | country    | str    | No       | Scan country if specified          |
-| options    | dict   | No       | Confirmed scan options             |
+| options    | dict   | No       | Confirmed scan options; live API currently returns nested values such as `headers.referer` and `useragent` |
+
+**Live correction**: the current live API accepts the `overrideSafety` wire field as a string-like value. The wrapper keeps `override_safety=True` ergonomic and serializes it to `"true"` on the wire.
 
 ## Entity: ScanResult
 

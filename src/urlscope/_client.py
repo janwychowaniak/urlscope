@@ -44,7 +44,7 @@ class UrlscopeClient:
         tags: list[str] | None = None,
         custom_agent: str | None = None,
         referer: str | None = None,
-        override_safety: bool | None = None,
+        override_safety: bool | str | None = None,
         country: str | None = None,
     ) -> SubmissionResponse:
         if tags is not None and len(tags) > 10:
@@ -56,7 +56,7 @@ class UrlscopeClient:
             "tags": tags,
             "customagent": custom_agent,
             "referer": referer,
-            "overrideSafety": override_safety,
+            "overrideSafety": self._serialize_override_safety(override_safety),
             "country": country,
         }
         response = await self._transport._request(
@@ -111,7 +111,7 @@ class UrlscopeClient:
         tags: list[str] | None = None,
         custom_agent: str | None = None,
         referer: str | None = None,
-        override_safety: bool | None = None,
+        override_safety: bool | str | None = None,
         country: str | None = None,
         poll_interval: float = 5.0,
         initial_wait: float = 10.0,
@@ -156,3 +156,13 @@ class UrlscopeClient:
                 await asyncio.sleep(poll_interval)
             except ScanDeletedError:
                 raise
+
+    @staticmethod
+    def _serialize_override_safety(
+        override_safety: bool | str | None,
+    ) -> str | None:
+        if override_safety is None or override_safety is False:
+            return None
+        if override_safety is True:
+            return "true"
+        return override_safety

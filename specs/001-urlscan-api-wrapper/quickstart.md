@@ -44,6 +44,7 @@ asyncio.run(main())
 async with UrlscopeClient(api_key="your-key") as client:
     submission = await client.submit("https://example.com", visibility="private")
     print(f"Scan UUID: {submission.uuid}")
+    print(f"Result URL: {submission.result}")
     # ... later ...
     result = await client.get_result(submission.uuid)
 ```
