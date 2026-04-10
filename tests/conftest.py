@@ -36,19 +36,12 @@ async def mock_client(
 
 @pytest.fixture
 def submission_response_json() -> dict[str, object]:
-    return {
-        "message": "Submission successful",
-        "uuid": "scan-123",
-        "result": "https://urlscan.io/result/scan-123/",
-        "api": "https://urlscan.io/api/v1/result/scan-123/",
-        "visibility": "public",
-        "url": "https://example.com",
-        "country": "US",
-        "options": {
-            "customagent": "ExampleAgent/1.0",
-            "overrideSafety": True,
-        },
-    }
+    return _load_json_fixture("submission_success_public.json")
+
+
+@pytest.fixture
+def submission_response_optional_json() -> dict[str, object]:
+    return _load_json_fixture("submission_success_optional.json")
 
 
 @pytest.fixture
@@ -87,6 +80,22 @@ def validation_error_response() -> httpx.Response:
             "message": "Validation failed",
             "description": "Invalid URL format",
         },
+    )
+
+
+@pytest.fixture
+def submission_dns_error_response() -> httpx.Response:
+    return httpx.Response(
+        400,
+        json=_load_json_fixture("submission_error_dns.json"),
+    )
+
+
+@pytest.fixture
+def submission_override_safety_error_response() -> httpx.Response:
+    return httpx.Response(
+        400,
+        json=_load_json_fixture("submission_error_override_safety.json"),
     )
 
 

@@ -21,7 +21,7 @@ async def test_submit_400_raises_validation_error_with_message(
         return_value=validation_error_response
     )
 
-    with pytest.raises(ValidationError, match="Validation failed"):
+    with pytest.raises(ValidationError, match="Validation failed: Invalid URL format"):
         await mock_client.submit("https://example.com")
 
 
@@ -164,3 +164,21 @@ async def test_httpx_timeout_exception_propagates_as_is(
 
     with pytest.raises(httpx.TimeoutException, match="timed out"):
         await mock_client.get_result("scan-123")
+
+
+@pytest.mark.asyncio
+async def test_submit_400_uses_nested_error_description_when_needed(
+    mock_client,
+    respx_mock,
+    test_base_url,
+    submission_override_safety_error_response,
+) -> None:
+    respx_mock.post(f"{test_base_url}/api/v1/scan/").mock(
+        return_value=submission_override_safety_error_response
+    )
+
+    with pytest.raises(
+        ValidationError,
+        match='ValidationError: "overrideSafety" must be a string',
+    ):
+        await mock_client.submit("https://example.com", override_safety="true")

@@ -42,7 +42,7 @@ def test_sync_submit_returns_typed_result(
     result = client.submit("https://example.com", visibility="public")
 
     assert isinstance(result, SubmissionResponse)
-    assert result.uuid == "scan-123"
+    assert result.uuid == str(submission_response_json["uuid"])
 
 
 def test_sync_get_result_returns_typed_result(

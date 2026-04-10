@@ -1,0 +1,13 @@
+{
+  "code": "validationerror",
+  "errors": [
+    {
+      "code": "validationerror",
+      "description": "ValidationError: \"overrideSafety\" must be a string",
+      "status": 400,
+      "title": "Field Validation Error"
+    }
+  ],
+  "message": "ValidationError: \"overrideSafety\" must be a string",
+  "type": "body"
+}

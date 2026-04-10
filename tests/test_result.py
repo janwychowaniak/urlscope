@@ -72,10 +72,12 @@ async def test_submit_and_wait_polls_until_result_is_ready(
     scan_result_json,
     not_found_error_response,
 ) -> None:
+    submission_uuid = str(submission_response_json["uuid"])
+
     respx_mock.post(f"{test_base_url}/api/v1/scan/").mock(
         return_value=httpx.Response(200, json=submission_response_json)
     )
-    route = respx_mock.get(f"{test_base_url}/api/v1/result/scan-123/").mock(
+    route = respx_mock.get(f"{test_base_url}/api/v1/result/{submission_uuid}/").mock(
         side_effect=[
             not_found_error_response,
             httpx.Response(200, json=scan_result_json),
@@ -102,10 +104,12 @@ async def test_submit_and_wait_times_out_when_scan_stays_pending(
     submission_response_json,
     not_found_error_response,
 ) -> None:
+    submission_uuid = str(submission_response_json["uuid"])
+
     respx_mock.post(f"{test_base_url}/api/v1/scan/").mock(
         return_value=httpx.Response(200, json=submission_response_json)
     )
-    respx_mock.get(f"{test_base_url}/api/v1/result/scan-123/").mock(
+    respx_mock.get(f"{test_base_url}/api/v1/result/{submission_uuid}/").mock(
         return_value=not_found_error_response
     )
 
@@ -117,7 +121,7 @@ async def test_submit_and_wait_times_out_when_scan_stays_pending(
             poll_timeout=0,
         )
 
-    assert exc_info.value.uuid == "scan-123"
+    assert exc_info.value.uuid == submission_uuid
 
 
 @pytest.mark.asyncio
@@ -128,10 +132,12 @@ async def test_submit_and_wait_raises_scan_deleted_error_during_poll(
     submission_response_json,
     scan_deleted_error_response,
 ) -> None:
+    submission_uuid = str(submission_response_json["uuid"])
+
     respx_mock.post(f"{test_base_url}/api/v1/scan/").mock(
         return_value=httpx.Response(200, json=submission_response_json)
     )
-    respx_mock.get(f"{test_base_url}/api/v1/result/scan-123/").mock(
+    respx_mock.get(f"{test_base_url}/api/v1/result/{submission_uuid}/").mock(
         side_effect=[scan_deleted_error_response]
     )
 
