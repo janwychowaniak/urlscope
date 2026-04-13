@@ -112,6 +112,15 @@ class SyncClient:
         *,
         size: int = 100,
         search_after: list[Any] | None = None,
+        datasource: Literal[
+            "scans",
+            "hostnames",
+            "incidents",
+            "notifications",
+            "certificates",
+        ]
+        | None = None,
+        collapse: str | None = None,
     ) -> SearchResponse:
         async def _run() -> SearchResponse:
             async with UrlscopeClient(
@@ -124,6 +133,8 @@ class SyncClient:
                     query,
                     size=size,
                     search_after=search_after,
+                    datasource=datasource,
+                    collapse=collapse,
                 )
 
         return asyncio.run(_run())

@@ -60,6 +60,26 @@ def scored_scan_result_json() -> dict[str, object]:
 
 
 @pytest.fixture
+def search_response_json() -> dict[str, object]:
+    return _load_json_fixture("search_common.json")
+
+
+@pytest.fixture
+def malicious_search_response_json() -> dict[str, object]:
+    return _load_json_fixture("search_malicious.json")
+
+
+@pytest.fixture
+def ip_search_response_json() -> dict[str, object]:
+    return _load_json_fixture("search_ip.json")
+
+
+@pytest.fixture
+def empty_search_response_json() -> dict[str, object]:
+    return _load_json_fixture("search_empty.json")
+
+
+@pytest.fixture
 def rate_limit_response() -> httpx.Response:
     return httpx.Response(
         429,

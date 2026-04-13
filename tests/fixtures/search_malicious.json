@@ -1,0 +1,65 @@
+{
+  "has_more": false,
+  "results": [
+    {
+      "_id": "a02f0630-01d6-414b-9648-c959ebce5c39",
+      "_score": null,
+      "page": {
+        "apexDomain": "pl-632462.icu",
+        "apexDomainAgeDays": 395,
+        "asn": "AS13335",
+        "asnname": "CLOUDFLARENET, US",
+        "country": "NL",
+        "domain": "allegrolokalnie.pl-632462.icu",
+        "domainAgeDays": 394,
+        "ip": "188.114.96.3",
+        "language": "pl",
+        "mimeType": "text/html",
+        "server": "cloudflare",
+        "status": "200",
+        "title": "Gigabyte GeForce RTX 4070 Ti Super Windforce OC 16gb",
+        "tlsAgeDays": 1,
+        "tlsIssuer": "WE1",
+        "tlsValidDays": 90,
+        "tlsValidFrom": "2025-02-12T13:47:19.000Z",
+        "url": "https://allegrolokalnie.pl-632462.icu/oferta/example"
+      },
+      "result": "https://urlscan.io/api/v1/result/a02f0630-01d6-414b-9648-c959ebce5c39/",
+      "screenshot": "https://urlscan.io/screenshots/a02f0630-01d6-414b-9648-c959ebce5c39.png",
+      "sort": [
+        1739488300816,
+        "a02f0630-01d6-414b-9648-c959ebce5c39"
+      ],
+      "stats": {
+        "dataLength": 2117968,
+        "encodedDataLength": 1258620,
+        "requests": 7,
+        "uniqCountries": 2,
+        "uniqIPs": 2
+      },
+      "submitter": {},
+      "task": {
+        "apexDomain": "pl-632462.icu",
+        "domain": "allegrolokalnie.pl-632462.icu",
+        "method": "api",
+        "tags": [
+          "falconsandbox"
+        ],
+        "time": "2025-02-13T23:11:40.816Z",
+        "url": "https://allegrolokalnie.pl-632462.icu/oferta/example",
+        "uuid": "a02f0630-01d6-414b-9648-c959ebce5c39",
+        "visibility": "public"
+      },
+      "verdicts": {
+        "score": 100,
+        "malicious": true,
+        "urlscan": {
+          "malicious": true
+        },
+        "hasVerdicts": true
+      }
+    }
+  ],
+  "took": 261,
+  "total": 1
+}

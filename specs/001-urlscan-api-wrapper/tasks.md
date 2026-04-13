@@ -94,13 +94,13 @@
 
 **Independent Test**: Execute search query → receive typed `SearchResponse` with items and pagination.
 
-- [ ] T016 [P] [US2] Implement search models in `src/urlscope/models/_search.py`. Classes: `SearchResultItem` (fields: id aliased from `_id`, sort, page, task, stats — all `dict | None` except id), `SearchResponse` (fields: results as `list[SearchResultItem]`, total as `int`, has_more as `bool`). `ConfigDict(extra="allow", populate_by_name=True)`. FR-016. Ref: data-model.md SearchResponse/SearchResultItem.
-  **Done when**: `SearchResponse.model_validate(sample_search_json)` parses correctly.
+- [ ] T016 [P] [US2] Implement search models in `src/urlscope/models/_search.py`. Classes: `SearchResultItem` (fields: id aliased from `_id`, score aliased from `_score`, sort, page, task, stats, submitter, result, screenshot), `SearchResponse` (fields: results as `list[SearchResultItem]`, total as `int`, took as optional `int`, has_more as `bool`). Keep `page`, `task`, `stats`, and `submitter` as `dict | None`; preserve less consistent live API sections such as `verdicts`, `dom`, `frames`, `canonical`, `scanner`, `links`, and `text` via `ConfigDict(extra="allow", populate_by_name=True)`. FR-016. Ref: data-model.md SearchResponse/SearchResultItem.
+  **Done when**: `SearchResponse.model_validate(sample_search_json)` parses live-shaped search payloads, including empty results and unmodeled optional sections preserved in `model_extra`.
 
-- [ ] T017 [US2] Update `src/urlscope/models/__init__.py` to re-export `SearchResponse`, `SearchResultItem`. Add `search()` method to `UrlscopeClient` in `src/urlscope/_client.py`: `search(query="*", *, size=100, search_after=None) → SearchResponse` (GET `/api/v1/search/` with query params `q`, `size`, `search_after`). Update `src/urlscope/__init__.py` exports. FR-006, FR-007.
-  **Done when**: `client.search("domain:example.com", size=10)` returns typed `SearchResponse`; pagination via `search_after` works.
+- [ ] T017 [US2] Update `src/urlscope/models/__init__.py` to re-export `SearchResponse`, `SearchResultItem`. Add `search()` method to `UrlscopeClient` in `src/urlscope/_client.py`: `search(query="*", *, size=100, search_after=None, datasource=None, collapse=None) → SearchResponse` (GET `/api/v1/search/` with query params `q`, `size`, comma-serialized `search_after`, optional `datasource`, and optional `collapse`). Update `src/urlscope/__init__.py` exports. FR-006, FR-007.
+  **Done when**: `client.search("domain:example.com", size=10)` returns typed `SearchResponse`; pagination via comma-serialized `search_after` works; optional `datasource` and `collapse` are passed through.
 
-- [ ] T018 [P] [US2] Write tests in `tests/test_search.py`. Test cases: search with query returns typed results; search with custom size; pagination via search_after; empty query defaults to wildcard; empty results (total=0, has_more=False). Mock `GET /api/v1/search/`. FR-006, FR-007.
+- [ ] T018 [P] [US2] Write tests in `tests/test_search.py`. Test cases: search with query returns typed live-shaped results; search with custom size; pagination via comma-serialized `search_after`; optional `datasource` and `collapse`; empty query defaults to wildcard; empty results (total=0, has_more=False); unmodeled optional sections remain available in `model_extra`. Mock `GET /api/v1/search/`. FR-006, FR-007.
   **Done when**: All tests pass with `pytest tests/test_search.py`.
 
 **Checkpoint**: Search with pagination working independently.

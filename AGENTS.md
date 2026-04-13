@@ -46,6 +46,9 @@ Use `pytest`, `pytest-asyncio`, and `respx` for async and HTTP transport tests. 
 Treat mocked tests as the default, but use live smoke tests to validate behavior that may have changed upstream. When the real urlscan API contradicts the local spec, update implementation, tests, and spec docs together instead of leaving the mismatch undocumented. Known live-API corrections in this repo:
 
 - Search pagination requires `search_after` as one comma-separated string, not repeated query parameters.
+- Search supports optional `datasource` and `collapse` query parameters.
+- Search results expose a partial typed model for stable top-level fields and preserve inconsistent live sections through Pydantic extras.
+- Search is backed by urlscan's searchable index; a UUID can be retrievable with `get_result(uuid)` while not appearing in `task.uuid:<uuid>` search results.
 - Quotas come from `GET /api/v1/quotas`, and the live response is nested under `limits`. The library preserves raw `limits` and exposes a flattened `QuotaInfo.quotas` convenience view.
 
 Keep live smoke tests small and explicit, and avoid turning them into default test-suite requirements.

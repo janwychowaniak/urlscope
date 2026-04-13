@@ -1,0 +1,106 @@
+{
+  "has_more": true,
+  "results": [
+    {
+      "_id": "019d8797-4e79-776f-af3d-53e92918fc3a",
+      "_score": null,
+      "page": {
+        "apexDomain": "wikipedia.org",
+        "apexDomainAgeDays": 4766,
+        "asn": "AS14907",
+        "asnname": "WIKIMEDIA - Wikimedia Foundation Inc., US",
+        "country": "US",
+        "domain": "es.wikipedia.org",
+        "domainAgeDays": 3350,
+        "ip": "2a02:ec80:300:ed1a::1",
+        "language": "es",
+        "mimeType": "text/html",
+        "server": "mw-web.eqiad.main-77f9b8795c-q224c",
+        "status": "200",
+        "title": "Guy Debord - Wikipedia, la enciclopedia libre",
+        "tlsAgeDays": 65,
+        "tlsIssuer": "E8",
+        "tlsValidDays": 89,
+        "tlsValidFrom": "2026-02-06T21:41:32.000Z",
+        "umbrellaRank": 58404,
+        "url": "https://es.wikipedia.org/wiki/Guy_Debord"
+      },
+      "result": "https://urlscan.io/api/v1/result/019d8797-4e79-776f-af3d-53e92918fc3a/",
+      "screenshot": "https://urlscan.io/screenshots/019d8797-4e79-776f-af3d-53e92918fc3a.png",
+      "sort": [
+        1776096341115,
+        "019d8797-4e79-776f-af3d-53e92918fc3a"
+      ],
+      "stats": {
+        "dataLength": 1970705,
+        "encodedDataLength": 583719,
+        "requests": 47,
+        "uniqCountries": 1,
+        "uniqIPs": 3
+      },
+      "submitter": {},
+      "task": {
+        "apexDomain": "wikipedia.org",
+        "domain": "es.wikipedia.org",
+        "method": "api",
+        "tags": [
+          "demotag1",
+          "demotag2"
+        ],
+        "time": "2026-04-13T16:05:41.115Z",
+        "url": "https://es.wikipedia.org/wiki/Guy_Debord",
+        "uuid": "019d8797-4e79-776f-af3d-53e92918fc3a",
+        "visibility": "public"
+      }
+    },
+    {
+      "_id": "019d8782-aa6c-702b-b596-bfc161e4f610",
+      "_score": null,
+      "page": {
+        "apexDomain": "gelatochocolatto.site",
+        "apexDomainAgeDays": 195,
+        "asn": "AS13335",
+        "asnname": "CLOUDFLARENET - Cloudflare, Inc., US",
+        "domain": "gelatochocolatto.site",
+        "domainAgeDays": 195,
+        "ip": "172.67.209.47",
+        "language": "en",
+        "mimeType": "text/html",
+        "redirected": "https-only",
+        "server": "cloudflare",
+        "status": "200",
+        "title": "Cat - Wikipedia",
+        "tlsAgeDays": 15,
+        "tlsIssuer": "WE1",
+        "tlsValidDays": 90,
+        "tlsValidFrom": "2026-03-29T01:14:18.000Z",
+        "url": "https://gelatochocolatto.site/"
+      },
+      "result": "https://urlscan.io/api/v1/result/019d8782-aa6c-702b-b596-bfc161e4f610/",
+      "screenshot": "https://urlscan.io/screenshots/019d8782-aa6c-702b-b596-bfc161e4f610.png",
+      "sort": [
+        1776094990409,
+        "019d8782-aa6c-702b-b596-bfc161e4f610"
+      ],
+      "stats": {
+        "dataLength": 3396425,
+        "encodedDataLength": 1409435,
+        "requests": 91,
+        "uniqCountries": 2,
+        "uniqIPs": 5
+      },
+      "submitter": {},
+      "task": {
+        "apexDomain": "gelatochocolatto.site",
+        "domain": "gelatochocolatto.site",
+        "method": "api",
+        "time": "2026-04-13T15:43:10.409Z",
+        "url": "http://gelatochocolatto.site/",
+        "uuid": "019d8782-aa6c-702b-b596-bfc161e4f610",
+        "visibility": "public"
+      }
+    }
+  ],
+  "took": 283,
+  "total": 10000
+}

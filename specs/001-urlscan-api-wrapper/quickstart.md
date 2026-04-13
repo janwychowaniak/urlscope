@@ -53,9 +53,16 @@ async with UrlscopeClient(api_key="your-key") as client:
 
 ```python
 async with UrlscopeClient() as client:
-    response = await client.search("domain:example.com", size=10)
+    response = await client.search(
+        "domain:example.com",
+        size=10,
+        datasource="scans",
+    )
+    print(f"Total matches: {response.total}, query took: {response.took}ms")
+
     for item in response.results:
-        print(f"{item.id}: {item.page.get('url', 'N/A')}")
+        page_url = item.page.get("url", "N/A") if item.page else "N/A"
+        print(f"{item.id}: {page_url} -> {item.result}")
 
     # Paginate
     if response.has_more:

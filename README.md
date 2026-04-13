@@ -64,9 +64,16 @@ from urlscope import UrlscopeClient
 
 async def main() -> None:
     async with UrlscopeClient() as client:
-        response = await client.search("domain:example.com", size=10)
+        response = await client.search(
+            "domain:example.com",
+            size=10,
+            datasource="scans",
+        )
+        print("total:", response.total, "took:", response.took)
+
         for item in response.results:
-            print(item.id, item.page.get("url") if item.page else None)
+            page_url = item.page.get("url") if item.page else None
+            print(item.id, page_url, item.result)
 
         # Cursor-based pagination is handled via the previous item's sort key.
         if response.has_more and response.results and response.results[-1].sort:
@@ -74,6 +81,7 @@ async def main() -> None:
                 "domain:example.com",
                 size=10,
                 search_after=response.results[-1].sort,
+                collapse="page.domain.keyword",
             )
             print(len(next_page.results))
 
@@ -155,6 +163,10 @@ Key response models:
 - `QuotaInfo`, `QuotaWindow`
 
 `ScanResult.verdicts` follows the live urlscan structure with nested sections such as `overall`, `urlscan`, `engines`, and `community`. For example, use `result.verdicts.overall.score` for the top-level score.
+
+`SearchResponse` includes `total`, `took`, `has_more`, and `results`. `SearchResultItem` exposes stable top-level fields such as `id`, `score`, `sort`, `page`, `task`, `stats`, `result`, and `screenshot`, while preserving less consistent live API sections as model extras. Search supports optional `datasource` and `collapse` parameters, and serializes `search_after` cursors in the comma-separated form expected by urlscan.
+
+Search uses urlscan's searchable index. If you already have an exact scan UUID, prefer `get_result(uuid)`; a retrievable UUID is not guaranteed to appear in search results under every account plan or index state.
 
 Key exceptions:
 

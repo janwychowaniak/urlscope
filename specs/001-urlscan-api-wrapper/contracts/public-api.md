@@ -97,6 +97,14 @@ class UrlscopeClient:
         *,
         size: int = 100,
         search_after: list[Any] | None = None,  # Pagination cursor
+        datasource: Literal[
+            "scans",
+            "hostnames",
+            "incidents",
+            "notifications",
+            "certificates",
+        ] | None = None,
+        collapse: str | None = None,
     ) -> SearchResponse: ...
 
     # Artifacts
@@ -108,6 +116,9 @@ class UrlscopeClient:
 ```
 
 `override_safety=True` is supported as a convenience and is serialized to the current live wire format (`"true"`).
+`search_after` is serialized as one comma-separated cursor string for compatibility with the live search API.
+`datasource` and `collapse` are passed through as optional search query parameters.
+Search is backed by urlscan's searchable index and is not guaranteed to find every UUID that `get_result(uuid)` can retrieve; use `get_result()` when the scan UUID is already known.
 
 ## SyncClient
 

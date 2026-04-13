@@ -202,21 +202,26 @@ Returned from `GET /api/v1/search/`.
 |----------|----------------------|----------|--------------------------------|
 | results  | list[SearchResultItem] | Yes    | List of matching scan summaries |
 | total    | int                  | Yes      | Total matching results count, server-enforced |
+| took     | int                  | No       | Query duration reported by the API |
 | has_more | bool                 | Yes      | Whether more results exist     |
 
 ## Entity: SearchResultItem
 
 Individual item within search results.
 
-| Field  | Type   | Required | Notes                                |
-|--------|--------|----------|--------------------------------------|
-| id     | str    | Yes      | Scan UUID (from `_id`)               |
-| sort   | list   | No       | Pagination cursor for `search_after` |
-| page   | dict   | No       | Page summary info                    |
-| task   | dict   | No       | Task summary info                    |
-| stats  | dict   | No       | Stats summary                        |
+| Field      | Type   | Required | Notes                                |
+|------------|--------|----------|--------------------------------------|
+| id         | str    | Yes      | Scan UUID (from `_id`)               |
+| score      | float  | No       | Search score from `_score`, often null |
+| sort       | list   | No       | Pagination cursor for `search_after` |
+| page       | dict   | No       | Page summary info                    |
+| task       | dict   | No       | Task summary info                    |
+| stats      | dict   | No       | Stats summary                        |
+| submitter  | dict   | No       | Submitter summary                    |
+| result     | str    | No       | Result API URL                       |
+| screenshot | str    | No       | Screenshot URL                       |
 
-**Note**: Search result items have lighter structure than full ScanResult. Typed as dicts at this level since the search API returns abbreviated fields.
+**Note**: Search result items have lighter structure than full ScanResult. Common top-level fields are typed directly. Rich optional sections such as `verdicts`, `dom`, `frames`, `canonical`, `scanner`, `links`, and `text` are preserved through Pydantic extras because the live API returns them inconsistently across result types.
 
 ## Entity: QuotaInfo
 

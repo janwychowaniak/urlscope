@@ -76,6 +76,15 @@ class UrlscopeClient:
         *,
         size: int = 100,
         search_after: list[Any] | None = None,
+        datasource: Literal[
+            "scans",
+            "hostnames",
+            "incidents",
+            "notifications",
+            "certificates",
+        ]
+        | None = None,
+        collapse: str | None = None,
     ) -> SearchResponse:
         params: dict[str, Any] = {
             "q": query,
@@ -83,6 +92,10 @@ class UrlscopeClient:
         }
         if search_after is not None:
             params["search_after"] = ",".join(str(value) for value in search_after)
+        if datasource is not None:
+            params["datasource"] = datasource
+        if collapse is not None:
+            params["collapse"] = collapse
 
         response = await self._transport._request(
             "GET",
