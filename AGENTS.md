@@ -16,6 +16,7 @@ GitHub workflow files live in `.github/workflows/`:
 - `publish-testpypi.yml` for TestPyPI trusted publishing,
 - and `publish-pypi.yml` for real PyPI trusted publishing.
 Product requirements and task sequencing live under `specs/001-urlscan-api-wrapper/`; treat those documents as the source of truth, but verify against the live urlscan API when behavior appears to drift.
+Future feature ideas that are outside the current public API scope live in `BACKLOG.md`.
 
 ## Build, Test, and Development Commands
 
