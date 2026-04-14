@@ -244,8 +244,9 @@ Returned from `GET /api/v1/quotas`.
 | used      | int    | No       | Requests already used          |
 | remaining | int    | No       | Remaining in current window    |
 | percent   | float  | No       | Percentage of window consumed  |
+| reset     | str    | No       | Optional reset timestamp when returned by urlscan |
 
-**Note**: urlscan's live quota response is nested under `limits`. The library preserves that raw structure in `QuotaInfo.limits` and also exposes a flattened `QuotaInfo.quotas` convenience list for iterating per action/window.
+**Note**: urlscan's live quota response is nested under `limits` and includes non-window metadata such as `features`, `products`, `queryableFields`, and maximum-retention/search-result settings. The library preserves that raw structure in `QuotaInfo.limits` and also exposes a flattened `QuotaInfo.quotas` convenience list for iterating per action/window.
 
 ## Entity Relationships
 

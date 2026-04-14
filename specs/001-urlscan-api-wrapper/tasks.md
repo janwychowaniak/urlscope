@@ -152,13 +152,13 @@ No additional tasks — FR-012 fully satisfied by T004 + T013.
 
 **Independent Test**: Call quota endpoint → receive typed `QuotaInfo` with raw `limits` plus flattened `quotas` windows.
 
-- [ ] T022 [P] [US6] Implement quota models in `src/urlscope/models/_quota.py`. Classes: `QuotaWindow` (fields: scope, action, window, limit, used, remaining, percent) and `QuotaInfo` (fields: `scope` and raw `limits`, plus computed flattened `quotas` as `list[QuotaWindow]`). Use `ConfigDict(extra="allow", populate_by_name=True)`. `QuotaInfo` must accept live top-level `scope` and preserve the raw `limits` structure. FR-016. Ref: data-model.md QuotaInfo/QuotaWindow.
-  **Done when**: `QuotaInfo.model_validate(sample_quota_json)` parses correctly.
+- [ ] T022 [P] [US6] Implement quota models in `src/urlscope/models/_quota.py`. Classes: `QuotaWindow` (fields: scope, action, window, limit, used, remaining, percent, reset) and `QuotaInfo` (fields: `scope` and raw `limits`, plus computed flattened `quotas` as `list[QuotaWindow]`). Use `ConfigDict(extra="allow", populate_by_name=True)`. `QuotaInfo` must accept live top-level `scope`, preserve the raw `limits` structure including metadata entries, and flatten only minute/hour/day windows. FR-016. Ref: data-model.md QuotaInfo/QuotaWindow.
+  **Done when**: `QuotaInfo.model_validate(sample_quota_json)` parses a live-shaped quota payload correctly and preserves raw metadata under `limits`.
 
 - [ ] T023 [US6] Update `src/urlscope/models/__init__.py` to re-export `QuotaInfo`, `QuotaWindow`. Add `get_quotas()` method to `UrlscopeClient` in `src/urlscope/_client.py`: `get_quotas() → QuotaInfo` (GET `/api/v1/quotas`). Update `src/urlscope/__init__.py` exports. FR-011.
   **Done when**: `client.get_quotas()` returns typed `QuotaInfo` with raw `limits` and flattened `quotas` windows.
 
-- [ ] T024 [P] [US6] Write tests in `tests/test_quota.py`. Test cases: get_quotas returns typed `QuotaInfo` with flattened quota windows; verify quota fields (`scope`, `action`, `window`, `limit`, `used`, `remaining`) from the computed `quotas` list. Mock `GET /api/v1/quotas`. FR-011.
+- [ ] T024 [P] [US6] Write tests in `tests/test_quota.py`. Test cases: get_quotas returns typed `QuotaInfo` with flattened quota windows from a canonical sanitized live-shaped fixture; verify quota fields (`scope`, `action`, `window`, `limit`, `used`, `remaining`, `percent`, `reset`) from the computed `quotas` list; verify non-window metadata remains in raw `limits` and is not flattened into quota windows. Mock `GET /api/v1/quotas`. FR-011.
   **Done when**: All tests pass with `pytest tests/test_quota.py`.
 
 **Checkpoint**: Quota queries working independently.

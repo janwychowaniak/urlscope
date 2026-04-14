@@ -80,6 +80,11 @@ def empty_search_response_json() -> dict[str, object]:
 
 
 @pytest.fixture
+def quota_response_json() -> dict[str, object]:
+    return _load_json_fixture("quota_user_live.json")
+
+
+@pytest.fixture
 def rate_limit_response() -> httpx.Response:
     return httpx.Response(
         429,

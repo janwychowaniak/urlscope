@@ -1,0 +1,163 @@
+{
+  "limits": {
+    "features": [],
+    "livescan": {
+      "day": {
+        "limit": 0,
+        "percent": 100,
+        "remaining": 0,
+        "used": 0
+      },
+      "hour": {
+        "limit": 0,
+        "percent": 100,
+        "remaining": 0,
+        "used": 0
+      },
+      "minute": {
+        "limit": 0,
+        "percent": 100,
+        "remaining": 0,
+        "used": 0
+      }
+    },
+    "malicious": {
+      "day": {
+        "limit": 1000,
+        "percent": 0,
+        "remaining": 1000,
+        "used": 0
+      },
+      "hour": {
+        "limit": 100,
+        "percent": 0,
+        "remaining": 100,
+        "used": 0
+      },
+      "minute": {
+        "limit": 10,
+        "percent": 0,
+        "remaining": 10,
+        "used": 0
+      }
+    },
+    "maxRetentionPeriodDays": 7,
+    "maxSearchResults": 1000,
+    "private": {
+      "day": {
+        "limit": 50,
+        "percent": 0,
+        "remaining": 50,
+        "used": 0
+      },
+      "hour": {
+        "limit": 50,
+        "percent": 0,
+        "remaining": 50,
+        "used": 0
+      },
+      "minute": {
+        "limit": 5,
+        "percent": 0,
+        "remaining": 5,
+        "used": 0
+      }
+    },
+    "products": [],
+    "public": {
+      "day": {
+        "limit": 5000,
+        "percent": 0,
+        "remaining": 5000,
+        "used": 0
+      },
+      "hour": {
+        "limit": 500,
+        "percent": 0,
+        "remaining": 500,
+        "used": 0
+      },
+      "minute": {
+        "limit": 60,
+        "percent": 0,
+        "remaining": 60,
+        "used": 0
+      }
+    },
+    "queryVisibility": [
+      "public"
+    ],
+    "queryableFields": [
+      "asn",
+      "country",
+      "domain.*",
+      "ip",
+      "page.*",
+      "task.*"
+    ],
+    "retrieve": {
+      "day": {
+        "limit": 10000,
+        "percent": 0,
+        "remaining": 10000,
+        "reset": "2030-01-01T00:00:00.000Z",
+        "used": 0
+      },
+      "hour": {
+        "limit": 5000,
+        "percent": 0,
+        "remaining": 5000,
+        "used": 0
+      },
+      "minute": {
+        "limit": 120,
+        "percent": 0,
+        "remaining": 120,
+        "used": 0
+      }
+    },
+    "search": {
+      "day": {
+        "limit": 1000,
+        "percent": 0,
+        "remaining": 1000,
+        "reset": "2030-01-01T00:00:00.000Z",
+        "used": 0
+      },
+      "hour": {
+        "limit": 1000,
+        "percent": 0,
+        "remaining": 1000,
+        "used": 0
+      },
+      "minute": {
+        "limit": 120,
+        "percent": 0,
+        "remaining": 120,
+        "used": 0
+      }
+    },
+    "unlisted": {
+      "day": {
+        "limit": 1000,
+        "percent": 0,
+        "remaining": 1000,
+        "reset": "2030-01-01T00:00:00.000Z",
+        "used": 0
+      },
+      "hour": {
+        "limit": 100,
+        "percent": 0,
+        "remaining": 100,
+        "used": 0
+      },
+      "minute": {
+        "limit": 60,
+        "percent": 0,
+        "remaining": 60,
+        "used": 0
+      }
+    }
+  },
+  "scope": "user"
+}

@@ -49,7 +49,7 @@ Treat mocked tests as the default, but use live smoke tests to validate behavior
 - Search supports optional `datasource` and `collapse` query parameters.
 - Search results expose a partial typed model for stable top-level fields and preserve inconsistent live sections through Pydantic extras.
 - Search is backed by urlscan's searchable index; a UUID can be retrievable with `get_result(uuid)` while not appearing in `task.uuid:<uuid>` search results.
-- Quotas come from `GET /api/v1/quotas`, and the live response is nested under `limits`. The library preserves raw `limits` and exposes a flattened `QuotaInfo.quotas` convenience view.
+- Quotas come from `GET /api/v1/quotas`, and the live response is nested under `limits`. The library preserves raw `limits`, leaves metadata entries unflattened, and exposes minute/hour/day windows through the flattened `QuotaInfo.quotas` convenience view.
 
 Keep live smoke tests small and explicit, and avoid turning them into default test-suite requirements.
 

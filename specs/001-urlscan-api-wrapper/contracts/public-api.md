@@ -119,6 +119,7 @@ class UrlscopeClient:
 `search_after` is serialized as one comma-separated cursor string for compatibility with the live search API.
 `datasource` and `collapse` are passed through as optional search query parameters.
 Search is backed by urlscan's searchable index and is not guaranteed to find every UUID that `get_result(uuid)` can retrieve; use `get_result()` when the scan UUID is already known.
+`get_quotas()` returns the live nested quota payload in `QuotaInfo.limits` and a flattened `QuotaInfo.quotas` convenience list for minute/hour/day windows. Raw metadata entries under `limits` are preserved but not flattened.
 
 ## SyncClient
 

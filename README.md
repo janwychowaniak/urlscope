@@ -118,13 +118,13 @@ async def main() -> None:
         quotas = await client.get_quotas()
         print(quotas.scope)
         for q in quotas.quotas[:5]:
-            print(q.scope, q.action, q.window, q.used, q.remaining, q.limit)
+            print(q.scope, q.action, q.window, q.used, q.remaining, q.limit, q.reset)
 
 
 asyncio.run(main())
 ```
 
-The live quotas response is also available in raw form via `QuotaInfo.limits`.
+The live quotas response is also available in raw form via `QuotaInfo.limits`, including account metadata that is not flattened into `QuotaInfo.quotas`.
 
 ### Error handling
 

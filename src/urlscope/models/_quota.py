@@ -13,6 +13,7 @@ class QuotaWindow(BaseModel):
     used: int | None = None
     remaining: int | None = None
     percent: float | int | None = None
+    reset: str | None = None
 
 
 class _QuotaPeriod(BaseModel):
@@ -22,6 +23,7 @@ class _QuotaPeriod(BaseModel):
     used: int | None = None
     remaining: int | None = None
     percent: float | int | None = None
+    reset: str | None = None
 
 
 class QuotaInfo(BaseModel):
@@ -56,6 +58,7 @@ class QuotaInfo(BaseModel):
                         used=period.used,
                         remaining=period.remaining,
                         percent=period.percent,
+                        reset=period.reset,
                     )
                 )
 

@@ -1,37 +1,11 @@
 import httpx
 import pytest
 
-from urlscope import QuotaInfo
-
-
-@pytest.fixture
-def quota_response_json() -> dict[str, object]:
-    return {
-        "scope": "user",
-        "limits": {
-            "search": {
-                "minute": {
-                    "limit": 60,
-                    "used": 1,
-                    "remaining": 59,
-                    "percent": 1.67,
-                }
-            },
-            "public": {
-                "day": {
-                    "limit": 1000,
-                    "used": 2,
-                    "remaining": 998,
-                    "percent": 0.2,
-                }
-            },
-            "maxRetentionPeriodDays": 7,
-        },
-    }
+from urlscope import QuotaInfo, QuotaWindow
 
 
 @pytest.mark.asyncio
-async def test_get_quotas_returns_typed_quota_info_with_windows(
+async def test_get_quotas_returns_live_shaped_quota_info_with_windows(
     mock_client,
     respx_mock,
     test_base_url,
@@ -44,7 +18,11 @@ async def test_get_quotas_returns_typed_quota_info_with_windows(
     quotas = await mock_client.get_quotas()
 
     assert isinstance(quotas, QuotaInfo)
-    assert len(quotas.quotas) == 2
+    assert quotas.scope == "user"
+    assert quotas.limits["maxRetentionPeriodDays"] == 7
+    assert quotas.limits["queryVisibility"] == ["public"]
+    assert len(quotas.quotas) == 21
+    assert all(isinstance(window, QuotaWindow) for window in quotas.quotas)
 
 
 @pytest.mark.asyncio
@@ -60,10 +38,42 @@ async def test_get_quotas_verifies_quota_fields(
 
     quotas = await mock_client.get_quotas()
 
-    first = quotas.quotas[0]
-    assert first.scope == "user"
-    assert first.action == "search"
-    assert first.window == "minute"
-    assert first.limit == 60
-    assert first.used == 1
-    assert first.remaining == 59
+    search_minute = next(
+        window
+        for window in quotas.quotas
+        if window.action == "search" and window.window == "minute"
+    )
+    assert search_minute.scope == "user"
+    assert search_minute.limit == 120
+    assert search_minute.used == 0
+    assert search_minute.remaining == 120
+    assert search_minute.percent == 0
+    assert search_minute.reset is None
+
+    search_day = next(
+        window
+        for window in quotas.quotas
+        if window.action == "search" and window.window == "day"
+    )
+    assert search_day.reset == "2030-01-01T00:00:00.000Z"
+
+
+def test_quota_model_flattens_only_minute_hour_day_windows(
+    quota_response_json,
+) -> None:
+    quotas = QuotaInfo.model_validate(quota_response_json)
+
+    actions = {window.action for window in quotas.quotas}
+    assert actions == {
+        "livescan",
+        "malicious",
+        "private",
+        "public",
+        "retrieve",
+        "search",
+        "unlisted",
+    }
+    assert "features" not in actions
+    assert "products" not in actions
+    assert "queryableFields" not in actions
+    assert "maxRetentionPeriodDays" not in actions

@@ -11,23 +11,6 @@ from urlscope import (
 from urlscope._client import UrlscopeClient
 
 
-@pytest.fixture
-def quota_response_json() -> dict[str, object]:
-    return {
-        "scope": "user",
-        "limits": {
-            "search": {
-                "minute": {
-                    "limit": 60,
-                    "used": 1,
-                    "remaining": 59,
-                    "percent": 1.67,
-                }
-            }
-        },
-    }
-
-
 def test_sync_submit_returns_typed_result(
     api_key: str,
     respx_mock,
@@ -137,8 +120,8 @@ def test_sync_get_quotas_returns_typed_result(
     result = client.get_quotas()
 
     assert isinstance(result, QuotaInfo)
-    assert len(result.quotas) == 1
-    assert result.quotas[0].action == "search"
+    assert len(result.quotas) == 21
+    assert result.scope == "user"
 
 
 def test_sync_client_uses_fresh_async_client_per_call(
