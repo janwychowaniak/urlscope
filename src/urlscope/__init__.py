@@ -25,7 +25,7 @@ from .models import (
     Verdicts,
 )
 
-__version__ = "0.1.3rc1"
+__version__ = "0.1.3rc2"
 
 __all__ = [
     "UrlscopeClient",
