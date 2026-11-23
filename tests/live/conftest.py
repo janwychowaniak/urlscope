@@ -19,12 +19,35 @@ from pydantic import BaseModel
 
 from urlscope import UrlscopeClient
 
+# Sections urlscan returns only for some scans, in shapes that vary between scans.
+# The models keep them untyped on purpose (they stay reachable via model_extra),
+# so the summary leaves them out and lists only names that are not here: a name in
+# the summary is a field the models have not seen before.
+KNOWN_UNMODELED: dict[str, frozenset[str]] = {
+    "ScanResult": frozenset({"metatags"}),
+    "SearchResponse.results[]": frozenset(
+        {
+            "clipboard",
+            "dom",
+            "frames",
+            "image",
+            "links",
+            "meta",
+            "scanner",
+            "team",
+            "text",
+            "verdicts",
+            "websockets",
+        }
+    ),
+}
+
 _unmodeled: dict[str, set[str]] = defaultdict(set)
 _notes: list[str] = []
 
 
 def _collect_unmodeled(model: BaseModel, path: str) -> None:
-    extra = model.model_extra or {}
+    extra = set(model.model_extra or {}) - KNOWN_UNMODELED.get(path, frozenset())
     if extra:
         _unmodeled[path].update(extra)
     for name in type(model).model_fields:
