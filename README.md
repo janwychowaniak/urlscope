@@ -182,7 +182,7 @@ Key exceptions:
 ## Development
 
 ```bash
-uv sync --extra dev
+uv sync
 .venv/bin/pytest tests/
 .venv/bin/ruff check src/ tests/
 .venv/bin/mypy src/

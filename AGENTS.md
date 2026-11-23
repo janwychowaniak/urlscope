@@ -23,7 +23,7 @@ Future feature ideas that are outside the current public API scope live in `BACK
 Use the managed virtual environment:
 
 ```bash
-uv sync --extra dev
+uv sync
 .venv/bin/python -c "import urlscope"
 .venv/bin/pytest tests/
 .venv/bin/ruff check src/ tests/
@@ -32,7 +32,7 @@ uv sync --extra dev
 .venv/bin/python -m twine check dist/*
 ```
 
-`uv sync --extra dev` installs runtime and dev dependencies into `.venv`. The import check confirms packaging works. Run `pytest` for tests, `ruff` for linting, and `mypy` in strict mode before opening a PR. Use `python -m build` and `twine check` when validating packaging changes or release automation.
+`uv sync` installs runtime and dev dependencies into `.venv`. The import check confirms packaging works. Run `pytest` for tests, `ruff` for linting, and `mypy` in strict mode before opening a PR. Use `python -m build` and `twine check` when validating packaging changes or release automation.
 
 ## Coding Style & Naming Conventions
 
