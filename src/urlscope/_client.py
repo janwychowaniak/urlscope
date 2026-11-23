@@ -153,8 +153,7 @@ class UrlscopeClient:
             elapsed = time.monotonic() - started_at
             if elapsed > poll_timeout:
                 message = (
-                    f"Scan {submission.uuid} still pending after "
-                    f"{poll_timeout} seconds"
+                    f"Scan {submission.uuid} still pending after {poll_timeout} seconds"
                 )
                 raise ScanTimeoutError(
                     message,

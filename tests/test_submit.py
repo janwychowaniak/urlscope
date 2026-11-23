@@ -19,7 +19,10 @@ async def test_submit_public_visibility_returns_submission_response(
 
     assert isinstance(result, SubmissionResponse)
     assert result.uuid == "019d789c-c97f-7483-9af5-4bc79125ebdc"
-    assert result.result == "https://urlscan.io/result/019d789c-c97f-7483-9af5-4bc79125ebdc/"
+    assert (
+        result.result
+        == "https://urlscan.io/result/019d789c-c97f-7483-9af5-4bc79125ebdc/"
+    )
     assert result.visibility == "public"
     assert result.options == {}
     assert route.called
