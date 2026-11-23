@@ -19,6 +19,10 @@ LOGGER = logging.getLogger("urlscope")
 if not LOGGER.handlers:
     LOGGER.addHandler(logging.NullHandler())
 
+# urlscan answers a malformed API key with 400 and this message instead of 401;
+# tests/live checks that the message still reads this way.
+_INVALID_API_KEY_FORMAT = "Invalid API key format"
+
 
 class _HTTPTransport:
     def __init__(
@@ -106,6 +110,8 @@ class _HTTPTransport:
 
         message = self._extract_error_message(response)
         if status_code == 400:
+            if message.startswith(_INVALID_API_KEY_FORMAT):
+                raise AuthenticationError(message)
             raise ValidationError(message)
         if status_code in {401, 403}:
             raise AuthenticationError(message)

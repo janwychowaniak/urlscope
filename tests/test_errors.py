@@ -26,6 +26,21 @@ async def test_submit_400_raises_validation_error_with_message(
 
 
 @pytest.mark.asyncio
+async def test_400_invalid_api_key_format_raises_authentication_error(
+    mock_client,
+    respx_mock,
+    test_base_url,
+    invalid_api_key_format_response,
+) -> None:
+    respx_mock.get(f"{test_base_url}/api/v1/quotas").mock(
+        return_value=invalid_api_key_format_response
+    )
+
+    with pytest.raises(AuthenticationError, match="Invalid API key format"):
+        await mock_client.get_quotas()
+
+
+@pytest.mark.asyncio
 async def test_submit_401_raises_authentication_error(
     mock_client,
     respx_mock,

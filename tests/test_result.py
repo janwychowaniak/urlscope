@@ -178,6 +178,15 @@ def test_scan_result_parses_multiple_live_shaped_fixtures(
     ]
 
 
+def test_scan_result_types_labels_scanner_and_submitter(scan_result_json) -> None:
+    result = ScanResult.model_validate(scan_result_json)
+
+    assert result.labels == []
+    assert result.scanner == {"country": "de"}
+    assert result.submitter == {"country": "us"}
+    assert not {"labels", "scanner", "submitter"} & (result.model_extra or {}).keys()
+
+
 def test_scan_result_preserves_unmodeled_nested_fields(scan_result_json) -> None:
     result = ScanResult.model_validate(scan_result_json)
 

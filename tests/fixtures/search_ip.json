@@ -37,9 +37,19 @@
         "url": "http://185.112.102.233/hiddenbin/Space.x86",
         "uuid": "3861a21b-2f41-4cf4-9f41-75b910e825b6",
         "visibility": "public"
-      }
+      },
+      "canonical": {
+        "task": {
+          "url": "http://185.112.102.233/hiddenbin/Space.x86"
+        },
+        "page": {
+          "url": "http://185.112.102.233/hiddenbin/Space.x86"
+        }
+      },
+      "labels": []
     }
   ],
   "took": 79,
-  "total": 22
+  "total": 22,
+  "search_date_limit_days": 365
 }

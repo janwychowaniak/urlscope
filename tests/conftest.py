@@ -125,6 +125,25 @@ def submission_override_safety_error_response() -> httpx.Response:
 
 
 @pytest.fixture
+def invalid_api_key_format_response() -> httpx.Response:
+    # live urlscan answer to a malformed API-Key header (400, not 401)
+    return httpx.Response(
+        400,
+        json={
+            "message": "Invalid API key format",
+            "status": 400,
+            "errors": [
+                {
+                    "title": "Invalid API key format",
+                    "detail": "Invalid API key format",
+                    "status": 400,
+                }
+            ],
+        },
+    )
+
+
+@pytest.fixture
 def authentication_error_response() -> httpx.Response:
     return httpx.Response(
         401,

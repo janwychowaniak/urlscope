@@ -2,5 +2,6 @@
   "has_more": false,
   "results": [],
   "took": 36,
-  "total": 0
+  "total": 0,
+  "search_date_limit_days": 365
 }

@@ -136,7 +136,15 @@ async def test_unknown_scan_raises_not_found(live_client: UrlscopeClient) -> Non
 
 
 async def test_unknown_api_key_raises_authentication_error() -> None:
-    # a well-formed key that does not exist gets 401; a malformed one gets 400
+    # a well-formed key that does not exist: urlscan answers 401
     async with UrlscopeClient(api_key=str(uuid.uuid4())) as client:
         with pytest.raises(AuthenticationError):
+            await client.get_quotas()
+
+
+async def test_malformed_api_key_raises_authentication_error() -> None:
+    # a malformed key: urlscan answers 400 "Invalid API key format", which the
+    # transport maps by its message; this fails if urlscan rewords it
+    async with UrlscopeClient(api_key="not-a-valid-key-format") as client:
+        with pytest.raises(AuthenticationError, match="Invalid API key format"):
             await client.get_quotas()

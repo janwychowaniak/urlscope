@@ -57,9 +57,19 @@
           "malicious": true
         },
         "hasVerdicts": true
-      }
+      },
+      "canonical": {
+        "task": {
+          "url": "https://allegrolokalnie.pl-632462.icu/oferta/example"
+        },
+        "page": {
+          "url": "https://allegrolokalnie.pl-632462.icu/oferta/example"
+        }
+      },
+      "labels": []
     }
   ],
   "took": 261,
-  "total": 1
+  "total": 1,
+  "search_date_limit_days": 365
 }

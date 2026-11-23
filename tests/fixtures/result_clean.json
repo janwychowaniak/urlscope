@@ -129,5 +129,12 @@
   },
   "meta": {
     "processors": []
+  },
+  "labels": [],
+  "scanner": {
+    "country": "de"
+  },
+  "submitter": {
+    "country": "us"
   }
 }

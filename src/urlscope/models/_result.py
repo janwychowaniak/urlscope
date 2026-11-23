@@ -157,3 +157,6 @@ class ScanResult(BaseModel):
     lists: ScanLists | None = None
     data: dict[str, Any] | None = None
     meta: dict[str, Any] | None = None
+    labels: list[Any] | None = None
+    scanner: dict[str, Any] | None = None
+    submitter: dict[str, Any] | None = None

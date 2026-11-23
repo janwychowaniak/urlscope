@@ -153,6 +153,23 @@ async def test_search_empty_results(
     assert response.has_more is False
 
 
+def test_search_model_types_canonical_labels_and_date_limit(
+    search_response_json,
+) -> None:
+    response = SearchResponse.model_validate(search_response_json)
+    first = response.results[0]
+
+    assert response.search_date_limit_days == 365
+    assert first.page is not None
+    assert first.task is not None
+    assert first.canonical == {
+        "task": {"url": first.task["url"]},
+        "page": {"url": first.page["url"]},
+    }
+    assert first.labels == []
+    assert not {"canonical", "labels"} & (first.model_extra or {}).keys()
+
+
 def test_search_model_preserves_unmodeled_optional_sections(
     malicious_search_response_json,
 ) -> None:

@@ -15,6 +15,8 @@ class SearchResultItem(BaseModel):
     submitter: dict[str, Any] | None = None
     result: str | None = None
     screenshot: str | None = None
+    canonical: dict[str, Any] | None = None
+    labels: list[Any] | None = None
 
 
 class SearchResponse(BaseModel):
@@ -24,3 +26,4 @@ class SearchResponse(BaseModel):
     total: int
     took: int | None = None
     has_more: bool
+    search_date_limit_days: int | None = None
