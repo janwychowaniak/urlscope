@@ -4,6 +4,10 @@ Each run makes two private scans of https://example.com, tagged
 ``urlscope-live-test``: one through ``submit``, one through the sync client's
 ``submit_and_wait``. The tests fail on HTTP errors and on responses that no longer
 fit the models; fields the models do not type are only reported in the summary.
+
+urlscan sometimes produces no screenshot for a finished scan and answers its
+screenshot URL with 404 and a placeholder PNG. The screenshot test then checks the
+endpoint on recent public scans instead and notes it in the summary.
 """
 
 import uuid
@@ -27,6 +31,7 @@ pytestmark = pytest.mark.live
 
 LIVE_URL = "https://example.com"
 LIVE_TAG = "urlscope-live-test"
+PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 
 Recorder = Callable[[BaseModel, str], None]
 
@@ -79,12 +84,30 @@ async def test_get_result_returns_the_same_scan(
     assert result.task.uuid == live_result.task.uuid
 
 
-async def test_get_screenshot_returns_png(
-    live_client: UrlscopeClient, live_result: ScanResult
-) -> None:
-    screenshot = await live_client.get_screenshot(live_result.task.uuid)
+async def _public_scan_screenshot(client: UrlscopeClient) -> tuple[str, bytes]:
+    """Screenshot of a recent public example.com scan that has one."""
+    response = await client.search("domain:example.com", size=5)
+    for item in response.results:
+        try:
+            return item.id, await client.get_screenshot(item.id)
+        except NotFoundError:
+            continue
+    pytest.fail("no screenshot for 5 recent public example.com scans either")
 
-    assert screenshot.startswith(b"\x89PNG\r\n\x1a\n")
+
+async def test_get_screenshot_returns_png(
+    live_client: UrlscopeClient,
+    live_result: ScanResult,
+    note: Callable[[str], None],
+) -> None:
+    scan_id = live_result.task.uuid
+    try:
+        screenshot = await live_client.get_screenshot(scan_id)
+    except NotFoundError:
+        public_id, screenshot = await _public_scan_screenshot(live_client)
+        note(f"no screenshot for scan {scan_id}; checked public scan {public_id}")
+
+    assert screenshot.startswith(PNG_SIGNATURE)
 
 
 async def test_get_dom_returns_html(
