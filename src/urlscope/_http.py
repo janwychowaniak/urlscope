@@ -23,6 +23,12 @@ if not LOGGER.handlers:
 # tests/live checks that the message still reads this way.
 _INVALID_API_KEY_FORMAT = "Invalid API key format"
 
+# A non-JSON error body goes into the exception message only when it is text, and
+# only this many characters of it: urlscan answers a missing screenshot with 404 and
+# a PNG, and proxies answer 5xx with whole HTML pages.
+_MAX_ERROR_BODY_CHARS = 300
+_TEXTUAL_MEDIA_TYPES = {"application/json", "application/xml", "application/javascript"}
+
 
 class _HTTPTransport:
     def __init__(
@@ -182,7 +188,36 @@ class _HTTPTransport:
                     if isinstance(title, str) and title:
                         return title
 
-        if response.text:
-            return response.text
+        return _describe_body(response)
 
-        return f"HTTP {response.status_code}"
+
+def _describe_body(response: httpx2.Response) -> str:
+    status = f"HTTP {response.status_code}"
+    if not response.content:
+        return status
+
+    content_type = response.headers.get("content-type", "")
+    media_type = content_type.split(";", 1)[0].strip().lower()
+    textual = (
+        media_type.startswith("text/")
+        or media_type in _TEXTUAL_MEDIA_TYPES
+        or media_type.endswith(("+json", "+xml"))
+    )
+    if not media_type:
+        try:
+            response.content.decode("utf-8")
+        except UnicodeDecodeError:
+            textual = False
+        else:
+            textual = True
+
+    if not textual:
+        size = len(response.content)
+        return f"{status} ({media_type or 'unknown type'}, {size} bytes)"
+
+    text = response.text.strip()
+    if not text:
+        return status
+    if len(text) > _MAX_ERROR_BODY_CHARS:
+        return text[:_MAX_ERROR_BODY_CHARS] + "..."
+    return text

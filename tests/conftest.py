@@ -144,6 +144,27 @@ def invalid_api_key_format_response() -> httpx.Response:
 
 
 @pytest.fixture
+def screenshot_placeholder_response() -> httpx.Response:
+    # urlscan's answer for a missing screenshot: 404 with a placeholder PNG body
+    return httpx.Response(
+        404,
+        headers={"content-type": "image/png"},
+        content=b"\x89PNG\r\n\x1a\n" + bytes(range(256)) * 4,
+    )
+
+
+@pytest.fixture
+def html_bad_gateway_response() -> httpx.Response:
+    # a proxy's error page: long HTML that must not flood the exception message
+    page = "<html><body>" + "Bad gateway. " * 100 + "</body></html>"
+    return httpx.Response(
+        502,
+        headers={"content-type": "text/html; charset=utf-8"},
+        content=page.encode(),
+    )
+
+
+@pytest.fixture
 def authentication_error_response() -> httpx.Response:
     return httpx.Response(
         401,

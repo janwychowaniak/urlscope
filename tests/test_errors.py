@@ -198,3 +198,56 @@ async def test_submit_400_uses_nested_error_description_when_needed(
         match='ValidationError: "overrideSafety" must be a string',
     ):
         await mock_client.submit("https://example.com", override_safety="true")
+
+
+@pytest.mark.asyncio
+async def test_binary_error_body_is_summarised_not_dumped(
+    mock_client,
+    httpx2_mock,
+    test_base_url,
+    screenshot_placeholder_response,
+) -> None:
+    httpx2_mock.get(f"{test_base_url}/screenshots/scan-123.png").mock(
+        return_value=screenshot_placeholder_response
+    )
+
+    with pytest.raises(NotFoundError) as exc_info:
+        await mock_client.get_screenshot("scan-123")
+
+    size = len(screenshot_placeholder_response.content)
+    assert str(exc_info.value) == f"HTTP 404 (image/png, {size} bytes)"
+
+
+@pytest.mark.asyncio
+async def test_long_text_error_body_is_truncated(
+    mock_client,
+    httpx2_mock,
+    test_base_url,
+    html_bad_gateway_response,
+) -> None:
+    httpx2_mock.get(f"{test_base_url}/api/v1/quotas").mock(
+        return_value=html_bad_gateway_response
+    )
+
+    with pytest.raises(APIError) as exc_info:
+        await mock_client.get_quotas()
+
+    message = str(exc_info.value)
+    assert exc_info.value.status_code == 502
+    assert message.startswith("<html><body>Bad gateway. Bad gateway.")
+    assert message.endswith("...")
+    assert len(message) == 300 + len("...")
+
+
+@pytest.mark.asyncio
+async def test_binary_error_body_without_content_type_is_summarised(
+    mock_client,
+    httpx2_mock,
+    test_base_url,
+) -> None:
+    httpx2_mock.get(f"{test_base_url}/api/v1/quotas").mock(
+        return_value=httpx.Response(500, content=b"\xff\xfe\x00binary")
+    )
+
+    with pytest.raises(APIError, match=r"^HTTP 500 \(unknown type, 9 bytes\)$"):
+        await mock_client.get_quotas()
