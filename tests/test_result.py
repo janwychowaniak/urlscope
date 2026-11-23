@@ -7,11 +7,11 @@ from urlscope import NotFoundError, ScanDeletedError, ScanResult, ScanTimeoutErr
 @pytest.mark.asyncio
 async def test_get_result_with_valid_uuid_returns_scan_result(
     mock_client,
-    respx_mock,
+    httpx2_mock,
     test_base_url,
     scan_result_json,
 ) -> None:
-    respx_mock.get(f"{test_base_url}/api/v1/result/scan-123/").mock(
+    httpx2_mock.get(f"{test_base_url}/api/v1/result/scan-123/").mock(
         return_value=httpx.Response(200, json=scan_result_json)
     )
 
@@ -36,11 +36,11 @@ async def test_get_result_with_valid_uuid_returns_scan_result(
 @pytest.mark.asyncio
 async def test_get_result_with_pending_scan_raises_not_found_error(
     mock_client,
-    respx_mock,
+    httpx2_mock,
     test_base_url,
     not_found_error_response,
 ) -> None:
-    respx_mock.get(f"{test_base_url}/api/v1/result/scan-123/").mock(
+    httpx2_mock.get(f"{test_base_url}/api/v1/result/scan-123/").mock(
         return_value=not_found_error_response
     )
 
@@ -51,11 +51,11 @@ async def test_get_result_with_pending_scan_raises_not_found_error(
 @pytest.mark.asyncio
 async def test_get_result_with_deleted_scan_raises_scan_deleted_error(
     mock_client,
-    respx_mock,
+    httpx2_mock,
     test_base_url,
     scan_deleted_error_response,
 ) -> None:
-    respx_mock.get(f"{test_base_url}/api/v1/result/scan-123/").mock(
+    httpx2_mock.get(f"{test_base_url}/api/v1/result/scan-123/").mock(
         return_value=scan_deleted_error_response
     )
 
@@ -66,7 +66,7 @@ async def test_get_result_with_deleted_scan_raises_scan_deleted_error(
 @pytest.mark.asyncio
 async def test_submit_and_wait_polls_until_result_is_ready(
     mock_client,
-    respx_mock,
+    httpx2_mock,
     test_base_url,
     submission_response_json,
     scan_result_json,
@@ -74,10 +74,10 @@ async def test_submit_and_wait_polls_until_result_is_ready(
 ) -> None:
     submission_uuid = str(submission_response_json["uuid"])
 
-    respx_mock.post(f"{test_base_url}/api/v1/scan/").mock(
+    httpx2_mock.post(f"{test_base_url}/api/v1/scan/").mock(
         return_value=httpx.Response(200, json=submission_response_json)
     )
-    route = respx_mock.get(f"{test_base_url}/api/v1/result/{submission_uuid}/").mock(
+    route = httpx2_mock.get(f"{test_base_url}/api/v1/result/{submission_uuid}/").mock(
         side_effect=[
             not_found_error_response,
             httpx.Response(200, json=scan_result_json),
@@ -96,20 +96,23 @@ async def test_submit_and_wait_polls_until_result_is_ready(
     assert len(route.calls) == 2
 
 
+# With poll_timeout=0 the timeout fires before the first poll, so the result
+# route is never called; the httpx2_mock fixture would otherwise reject that.
+@pytest.mark.httpx2(assert_all_called=False)
 @pytest.mark.asyncio
 async def test_submit_and_wait_times_out_when_scan_stays_pending(
     mock_client,
-    respx_mock,
+    httpx2_mock,
     test_base_url,
     submission_response_json,
     not_found_error_response,
 ) -> None:
     submission_uuid = str(submission_response_json["uuid"])
 
-    respx_mock.post(f"{test_base_url}/api/v1/scan/").mock(
+    httpx2_mock.post(f"{test_base_url}/api/v1/scan/").mock(
         return_value=httpx.Response(200, json=submission_response_json)
     )
-    respx_mock.get(f"{test_base_url}/api/v1/result/{submission_uuid}/").mock(
+    httpx2_mock.get(f"{test_base_url}/api/v1/result/{submission_uuid}/").mock(
         return_value=not_found_error_response
     )
 
@@ -127,17 +130,17 @@ async def test_submit_and_wait_times_out_when_scan_stays_pending(
 @pytest.mark.asyncio
 async def test_submit_and_wait_raises_scan_deleted_error_during_poll(
     mock_client,
-    respx_mock,
+    httpx2_mock,
     test_base_url,
     submission_response_json,
     scan_deleted_error_response,
 ) -> None:
     submission_uuid = str(submission_response_json["uuid"])
 
-    respx_mock.post(f"{test_base_url}/api/v1/scan/").mock(
+    httpx2_mock.post(f"{test_base_url}/api/v1/scan/").mock(
         return_value=httpx.Response(200, json=submission_response_json)
     )
-    respx_mock.get(f"{test_base_url}/api/v1/result/{submission_uuid}/").mock(
+    httpx2_mock.get(f"{test_base_url}/api/v1/result/{submission_uuid}/").mock(
         side_effect=[scan_deleted_error_response]
     )
 

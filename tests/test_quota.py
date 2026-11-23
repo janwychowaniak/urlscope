@@ -7,11 +7,11 @@ from urlscope import QuotaInfo, QuotaWindow
 @pytest.mark.asyncio
 async def test_get_quotas_returns_live_shaped_quota_info_with_windows(
     mock_client,
-    respx_mock,
+    httpx2_mock,
     test_base_url,
     quota_response_json,
 ) -> None:
-    respx_mock.get(f"{test_base_url}/api/v1/quotas").mock(
+    httpx2_mock.get(f"{test_base_url}/api/v1/quotas").mock(
         return_value=httpx.Response(200, json=quota_response_json)
     )
 
@@ -28,11 +28,11 @@ async def test_get_quotas_returns_live_shaped_quota_info_with_windows(
 @pytest.mark.asyncio
 async def test_get_quotas_verifies_quota_fields(
     mock_client,
-    respx_mock,
+    httpx2_mock,
     test_base_url,
     quota_response_json,
 ) -> None:
-    respx_mock.get(f"{test_base_url}/api/v1/quotas").mock(
+    httpx2_mock.get(f"{test_base_url}/api/v1/quotas").mock(
         return_value=httpx.Response(200, json=quota_response_json)
     )
 

@@ -13,11 +13,11 @@ from urlscope._client import UrlscopeClient
 
 def test_sync_submit_returns_typed_result(
     api_key: str,
-    respx_mock,
+    httpx2_mock,
     test_base_url: str,
     submission_response_json,
 ) -> None:
-    respx_mock.post(f"{test_base_url}/api/v1/scan/").mock(
+    httpx2_mock.post(f"{test_base_url}/api/v1/scan/").mock(
         return_value=httpx.Response(200, json=submission_response_json)
     )
 
@@ -30,11 +30,11 @@ def test_sync_submit_returns_typed_result(
 
 def test_sync_get_result_returns_typed_result(
     api_key: str,
-    respx_mock,
+    httpx2_mock,
     test_base_url: str,
     scan_result_json,
 ) -> None:
-    respx_mock.get(f"{test_base_url}/api/v1/result/scan-123/").mock(
+    httpx2_mock.get(f"{test_base_url}/api/v1/result/scan-123/").mock(
         return_value=httpx.Response(200, json=scan_result_json)
     )
 
@@ -47,10 +47,10 @@ def test_sync_get_result_returns_typed_result(
 
 def test_sync_search_returns_typed_result(
     api_key: str,
-    respx_mock,
+    httpx2_mock,
     test_base_url: str,
 ) -> None:
-    respx_mock.get(f"{test_base_url}/api/v1/search/").mock(
+    httpx2_mock.get(f"{test_base_url}/api/v1/search/").mock(
         return_value=httpx.Response(
             200,
             json={
@@ -78,10 +78,10 @@ def test_sync_search_returns_typed_result(
 
 def test_sync_get_screenshot_returns_bytes(
     api_key: str,
-    respx_mock,
+    httpx2_mock,
     test_base_url: str,
 ) -> None:
-    respx_mock.get(f"{test_base_url}/screenshots/scan-123.png").mock(
+    httpx2_mock.get(f"{test_base_url}/screenshots/scan-123.png").mock(
         return_value=httpx.Response(200, content=b"\x89PNG\r\n\x1a\nmock")
     )
 
@@ -93,10 +93,10 @@ def test_sync_get_screenshot_returns_bytes(
 
 def test_sync_get_dom_returns_string(
     api_key: str,
-    respx_mock,
+    httpx2_mock,
     test_base_url: str,
 ) -> None:
-    respx_mock.get(f"{test_base_url}/dom/scan-123/").mock(
+    httpx2_mock.get(f"{test_base_url}/dom/scan-123/").mock(
         return_value=httpx.Response(200, text="<html><body>mock</body></html>")
     )
 
@@ -108,11 +108,11 @@ def test_sync_get_dom_returns_string(
 
 def test_sync_get_quotas_returns_typed_result(
     api_key: str,
-    respx_mock,
+    httpx2_mock,
     test_base_url: str,
     quota_response_json,
 ) -> None:
-    respx_mock.get(f"{test_base_url}/api/v1/quotas").mock(
+    httpx2_mock.get(f"{test_base_url}/api/v1/quotas").mock(
         return_value=httpx.Response(200, json=quota_response_json)
     )
 
@@ -126,7 +126,7 @@ def test_sync_get_quotas_returns_typed_result(
 
 def test_sync_client_uses_fresh_async_client_per_call(
     api_key: str,
-    respx_mock,
+    httpx2_mock,
     test_base_url: str,
     scan_result_json,
     monkeypatch: pytest.MonkeyPatch,
@@ -139,7 +139,7 @@ def test_sync_client_uses_fresh_async_client_per_call(
         created_clients.append(self)
 
     monkeypatch.setattr(UrlscopeClient, "__init__", tracking_init)
-    respx_mock.get(f"{test_base_url}/api/v1/result/scan-123/").mock(
+    httpx2_mock.get(f"{test_base_url}/api/v1/result/scan-123/").mock(
         return_value=httpx.Response(200, json=scan_result_json)
     )
 

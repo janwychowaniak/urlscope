@@ -4,7 +4,7 @@ import os
 import random
 from typing import Any
 
-import httpx
+import httpx2
 
 from ._exceptions import (
     APIError,
@@ -42,7 +42,7 @@ class _HTTPTransport:
         self.base_url = base_url.rstrip("/")
         self.timeout = timeout
         self.max_retries = max_retries
-        self._client = httpx.AsyncClient(
+        self._client = httpx2.AsyncClient(
             base_url=self.base_url,
             timeout=self.timeout,
             headers={"API-Key": resolved_api_key},
@@ -63,7 +63,7 @@ class _HTTPTransport:
         method: str,
         path: str,
         **kwargs: Any,
-    ) -> httpx.Response:
+    ) -> httpx2.Response:
         retries = 0
 
         while True:
@@ -103,7 +103,7 @@ class _HTTPTransport:
             self._raise_for_status(response)
             return response
 
-    def _raise_for_status(self, response: httpx.Response) -> None:
+    def _raise_for_status(self, response: httpx2.Response) -> None:
         status_code = response.status_code
         if status_code < 400:
             return
@@ -121,7 +121,7 @@ class _HTTPTransport:
             raise ScanDeletedError(message)
         raise APIError(status_code, message)
 
-    def _compute_retry_delay(self, response: httpx.Response, attempt: int) -> float:
+    def _compute_retry_delay(self, response: httpx2.Response, attempt: int) -> float:
         retry_after = self._parse_retry_after(response)
         if retry_after is not None:
             base_delay = retry_after
@@ -132,7 +132,7 @@ class _HTTPTransport:
         return max(0.0, base_delay * jitter_multiplier)
 
     @staticmethod
-    def _parse_retry_after(response: httpx.Response) -> float | None:
+    def _parse_retry_after(response: httpx2.Response) -> float | None:
         raw_value = response.headers.get("X-Rate-Limit-Reset-After")
         if raw_value is None:
             return None
@@ -143,7 +143,7 @@ class _HTTPTransport:
             return None
 
     @staticmethod
-    def _extract_error_message(response: httpx.Response) -> str:
+    def _extract_error_message(response: httpx2.Response) -> str:
         try:
             payload = response.json()
         except ValueError:

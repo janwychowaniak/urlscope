@@ -7,11 +7,11 @@ from urlscope import SearchResponse
 @pytest.mark.asyncio
 async def test_search_with_query_returns_typed_results(
     mock_client,
-    respx_mock,
+    httpx2_mock,
     test_base_url,
     search_response_json,
 ) -> None:
-    route = respx_mock.get(f"{test_base_url}/api/v1/search/").mock(
+    route = httpx2_mock.get(f"{test_base_url}/api/v1/search/").mock(
         return_value=httpx.Response(200, json=search_response_json)
     )
 
@@ -47,11 +47,11 @@ async def test_search_with_query_returns_typed_results(
 @pytest.mark.asyncio
 async def test_search_with_custom_size(
     mock_client,
-    respx_mock,
+    httpx2_mock,
     test_base_url,
     search_response_json,
 ) -> None:
-    route = respx_mock.get(f"{test_base_url}/api/v1/search/").mock(
+    route = httpx2_mock.get(f"{test_base_url}/api/v1/search/").mock(
         return_value=httpx.Response(200, json=search_response_json)
     )
 
@@ -67,11 +67,11 @@ async def test_search_with_custom_size(
 @pytest.mark.asyncio
 async def test_search_pagination_via_search_after(
     mock_client,
-    respx_mock,
+    httpx2_mock,
     test_base_url,
     search_response_json,
 ) -> None:
-    route = respx_mock.get(f"{test_base_url}/api/v1/search/").mock(
+    route = httpx2_mock.get(f"{test_base_url}/api/v1/search/").mock(
         return_value=httpx.Response(200, json=search_response_json)
     )
 
@@ -91,11 +91,11 @@ async def test_search_pagination_via_search_after(
 @pytest.mark.asyncio
 async def test_search_with_datasource_and_collapse(
     mock_client,
-    respx_mock,
+    httpx2_mock,
     test_base_url,
     search_response_json,
 ) -> None:
-    route = respx_mock.get(f"{test_base_url}/api/v1/search/").mock(
+    route = httpx2_mock.get(f"{test_base_url}/api/v1/search/").mock(
         return_value=httpx.Response(200, json=search_response_json)
     )
 
@@ -116,11 +116,11 @@ async def test_search_with_datasource_and_collapse(
 @pytest.mark.asyncio
 async def test_search_empty_query_defaults_to_wildcard(
     mock_client,
-    respx_mock,
+    httpx2_mock,
     test_base_url,
     search_response_json,
 ) -> None:
-    route = respx_mock.get(f"{test_base_url}/api/v1/search/").mock(
+    route = httpx2_mock.get(f"{test_base_url}/api/v1/search/").mock(
         return_value=httpx.Response(200, json=search_response_json)
     )
 
@@ -136,11 +136,11 @@ async def test_search_empty_query_defaults_to_wildcard(
 @pytest.mark.asyncio
 async def test_search_empty_results(
     mock_client,
-    respx_mock,
+    httpx2_mock,
     test_base_url,
     empty_search_response_json,
 ) -> None:
-    respx_mock.get(f"{test_base_url}/api/v1/search/").mock(
+    httpx2_mock.get(f"{test_base_url}/api/v1/search/").mock(
         return_value=httpx.Response(200, json=empty_search_response_json)
     )
 

@@ -27,7 +27,7 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "httpx",
+  "httpx2>=2.16",
   "pydantic>=2",
 ]
 
@@ -38,9 +38,11 @@ Issues = "https://github.com/janwychowaniak/urlscope/issues"
 
 [dependency-groups]
 dev = [
+  "httpx",            # respx accepts mocked responses only as httpx.Response (respx#324)
   "mypy",
   "pytest",
   "pytest-asyncio",
+  "pytest-httpx2",    # routes respx through httpx2's transport (httpx2_mock fixture)
   "respx",
   "ruff",
 ]
@@ -59,8 +61,10 @@ asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 markers = [
   "live: calls the real urlscan.io API; needs URLSCAN_API_KEY (uv run --env-file .env pytest -m live)",
+  # pytest-httpx2 1.0.0 reads this marker but never registers it (its hook is not exported)
+  "httpx2(*, assert_all_called=False, assert_all_mocked=False, base_url=...): configure the httpx2_mock fixture",
 ]
-addopts = "-m 'not live' --strict-markers"
+addopts = "-m 'not live' --strict-markers -p pytest_httpx2"
 
 [tool.ruff]
 target-version = "py311"

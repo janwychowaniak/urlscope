@@ -146,6 +146,8 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
+Network failures are not wrapped: connection errors and timeouts propagate as [`httpx2`](https://github.com/pydantic/httpx2) exceptions, such as `httpx2.ConnectError` and `httpx2.TimeoutException`.
+
 `submit(..., override_safety=True)` is supported by the wrapper and is serialized to the current live urlscan wire format for `overrideSafety`.
 
 ## API Reference

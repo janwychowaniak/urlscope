@@ -40,7 +40,7 @@ Target Python 3.10+ and keep type annotations complete. Use `snake_case` for mod
 
 ## Testing Guidelines
 
-Use `pytest`, `pytest-asyncio`, and `respx` for async and HTTP transport tests. Name files by feature area, for example `tests/test_submit.py` or `tests/test_errors.py`. Prefer shared fixtures from `tests/conftest.py` over inline sample payloads. The current suite covers async and sync client behavior, search pagination, artifacts, quota handling, retry logic, and context management. Run focused files while iterating, then rerun the affected area after any live-API-driven fix. Avoid brittle assertions based on `id()` or other runtime reuse details when a direct object or value assertion is possible.
+Use `pytest`, `pytest-asyncio`, and `respx` (through `pytest-httpx2` and its `httpx2_mock` fixture) for async and HTTP transport tests. Name files by feature area, for example `tests/test_submit.py` or `tests/test_errors.py`. Prefer shared fixtures from `tests/conftest.py` over inline sample payloads. The current suite covers async and sync client behavior, search pagination, artifacts, quota handling, retry logic, and context management. Run focused files while iterating, then rerun the affected area after any live-API-driven fix. Avoid brittle assertions based on `id()` or other runtime reuse details when a direct object or value assertion is possible.
 
 ## Live API Drift
 

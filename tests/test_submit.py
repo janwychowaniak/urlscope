@@ -7,11 +7,11 @@ from urlscope import SubmissionResponse, ValidationError
 @pytest.mark.asyncio
 async def test_submit_public_visibility_returns_submission_response(
     mock_client,
-    respx_mock,
+    httpx2_mock,
     test_base_url,
     submission_response_json,
 ) -> None:
-    route = respx_mock.post(f"{test_base_url}/api/v1/scan/").mock(
+    route = httpx2_mock.post(f"{test_base_url}/api/v1/scan/").mock(
         return_value=httpx.Response(200, json=submission_response_json)
     )
 
@@ -31,12 +31,12 @@ async def test_submit_public_visibility_returns_submission_response(
 @pytest.mark.asyncio
 async def test_submit_private_visibility_returns_submission_response(
     mock_client,
-    respx_mock,
+    httpx2_mock,
     test_base_url,
     submission_response_json,
 ) -> None:
     private_response = {**submission_response_json, "visibility": "private"}
-    route = respx_mock.post(f"{test_base_url}/api/v1/scan/").mock(
+    route = httpx2_mock.post(f"{test_base_url}/api/v1/scan/").mock(
         return_value=httpx.Response(200, json=private_response)
     )
 
@@ -54,11 +54,11 @@ async def test_submit_private_visibility_returns_submission_response(
 @pytest.mark.asyncio
 async def test_submit_with_all_optional_params(
     mock_client,
-    respx_mock,
+    httpx2_mock,
     test_base_url,
     submission_response_optional_json,
 ) -> None:
-    route = respx_mock.post(f"{test_base_url}/api/v1/scan/").mock(
+    route = httpx2_mock.post(f"{test_base_url}/api/v1/scan/").mock(
         return_value=httpx.Response(200, json=submission_response_optional_json)
     )
 
@@ -101,11 +101,11 @@ async def test_submit_with_more_than_ten_tags_raises_value_error(
 @pytest.mark.asyncio
 async def test_submit_dns_rejection_raises_validation_error(
     mock_client,
-    respx_mock,
+    httpx2_mock,
     test_base_url,
     submission_dns_error_response,
 ) -> None:
-    respx_mock.post(f"{test_base_url}/api/v1/scan/").mock(
+    httpx2_mock.post(f"{test_base_url}/api/v1/scan/").mock(
         return_value=submission_dns_error_response
     )
 
@@ -125,11 +125,11 @@ async def test_submit_dns_rejection_raises_validation_error(
 @pytest.mark.asyncio
 async def test_submit_override_safety_string_passes_through(
     mock_client,
-    respx_mock,
+    httpx2_mock,
     test_base_url,
     submission_response_optional_json,
 ) -> None:
-    route = respx_mock.post(f"{test_base_url}/api/v1/scan/").mock(
+    route = httpx2_mock.post(f"{test_base_url}/api/v1/scan/").mock(
         return_value=httpx.Response(200, json=submission_response_optional_json)
     )
 

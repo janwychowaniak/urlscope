@@ -15,7 +15,7 @@ async def test_429_with_reset_after_header_retries_after_header_duration(
     rate_limit_response: httpx.Response,
     scan_result_json,
     test_base_url: str,
-    respx_mock,
+    httpx2_mock,
 ) -> None:
     sleep_calls: list[float] = []
 
@@ -26,7 +26,7 @@ async def test_429_with_reset_after_header_retries_after_header_duration(
     monkeypatch.setattr(http_module.random, "uniform", lambda _a, _b: 1.1)
     caplog.set_level(logging.DEBUG, logger="urlscope")
 
-    route = respx_mock.get(f"{test_base_url}/api/v1/result/scan-123/").mock(
+    route = httpx2_mock.get(f"{test_base_url}/api/v1/result/scan-123/").mock(
         side_effect=[
             rate_limit_response,
             httpx.Response(200, json=scan_result_json),
@@ -52,7 +52,7 @@ async def test_429_without_header_uses_exponential_backoff_with_jitter(
     monkeypatch: pytest.MonkeyPatch,
     scan_result_json,
     test_base_url: str,
-    respx_mock,
+    httpx2_mock,
 ) -> None:
     sleep_calls: list[float] = []
 
@@ -62,7 +62,7 @@ async def test_429_without_header_uses_exponential_backoff_with_jitter(
     monkeypatch.setattr(http_module.asyncio, "sleep", fake_sleep)
     monkeypatch.setattr(http_module.random, "uniform", lambda _a, _b: 0.8)
 
-    route = respx_mock.get(f"{test_base_url}/api/v1/result/scan-123/").mock(
+    route = httpx2_mock.get(f"{test_base_url}/api/v1/result/scan-123/").mock(
         side_effect=[
             httpx.Response(429, json={"message": "Rate limit exceeded"}),
             httpx.Response(200, json=scan_result_json),
@@ -88,7 +88,7 @@ async def test_multiple_429s_then_200_succeeds(
     monkeypatch: pytest.MonkeyPatch,
     scan_result_json,
     test_base_url: str,
-    respx_mock,
+    httpx2_mock,
 ) -> None:
     sleep_calls: list[float] = []
 
@@ -98,7 +98,7 @@ async def test_multiple_429s_then_200_succeeds(
     monkeypatch.setattr(http_module.asyncio, "sleep", fake_sleep)
     monkeypatch.setattr(http_module.random, "uniform", lambda _a, _b: 1.0)
 
-    route = respx_mock.get(f"{test_base_url}/api/v1/result/scan-123/").mock(
+    route = httpx2_mock.get(f"{test_base_url}/api/v1/result/scan-123/").mock(
         side_effect=[
             httpx.Response(
                 429,
@@ -132,7 +132,7 @@ async def test_max_retries_exceeded_raises_rate_limit_error_with_attrs(
     caplog: pytest.LogCaptureFixture,
     monkeypatch: pytest.MonkeyPatch,
     test_base_url: str,
-    respx_mock,
+    httpx2_mock,
 ) -> None:
     sleep_calls: list[float] = []
 
@@ -152,7 +152,7 @@ async def test_max_retries_exceeded_raises_rate_limit_error_with_attrs(
         },
         json={"message": "Rate limit exceeded"},
     )
-    route = respx_mock.get(f"{test_base_url}/api/v1/result/scan-123/").mock(
+    route = httpx2_mock.get(f"{test_base_url}/api/v1/result/scan-123/").mock(
         side_effect=[rate_limited, rate_limited]
     )
 
