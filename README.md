@@ -44,6 +44,29 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
+### Submit now, fetch the result later
+
+```python
+import asyncio
+from urlscope import NotFoundError, UrlscopeClient
+
+
+async def main() -> None:
+    async with UrlscopeClient() as client:
+        submission = await client.submit("https://example.com", visibility="private")
+        print(submission.uuid, submission.result)
+
+        # Later: get_result raises NotFoundError while the scan is still running.
+        try:
+            result = await client.get_result(submission.uuid)
+            print(result.page.url)
+        except NotFoundError:
+            print("still pending")
+
+
+asyncio.run(main())
+```
+
 ### Sync usage
 
 ```python
@@ -106,6 +129,8 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
+urlscan occasionally produces no screenshot for a finished scan; `get_screenshot` then raises `NotFoundError`.
+
 ### Check quotas
 
 ```python
@@ -164,6 +189,8 @@ Key response models:
 - `SearchResponse`, `SearchResultItem`
 - `QuotaInfo`, `QuotaWindow`
 
+Every model keeps the fields it does not type: `result.model_extra` holds them, and `result.model_dump(by_alias=True)` returns the whole payload under urlscan's field names.
+
 `ScanResult.verdicts` follows the live urlscan structure with nested sections such as `overall`, `urlscan`, `engines`, and `community`. For example, use `result.verdicts.overall.score` for the top-level score.
 
 `SearchResponse` includes `total`, `took`, `has_more`, and `results`. `SearchResultItem` exposes stable top-level fields such as `id`, `score`, `sort`, `page`, `task`, `stats`, `result`, and `screenshot`, while preserving less consistent live API sections as model extras. Search supports optional `datasource` and `collapse` parameters, and serializes `search_after` cursors in the comma-separated form expected by urlscan.
@@ -184,15 +211,17 @@ Key exceptions:
 ## Development
 
 ```bash
-uv sync
-.venv/bin/pytest tests/
-.venv/bin/ruff check src/ tests/
-.venv/bin/mypy src/
-.venv/bin/python -m build
-.venv/bin/python -m twine check dist/*
+uv sync                                   # dev tools included
+git config core.hooksPath .githooks       # once per clone: gitleaks secret scanning
+uv run pytest tests/                      # mocked tests
+uv run --env-file .env pytest -m live     # tests against the real API; needs URLSCAN_API_KEY
+uv run ruff check src/ tests/
+uv run ruff format --check src/ tests/
+uv run mypy src/
+uv build && uvx twine check --strict dist/*
 ```
 
-The package version is defined in `src/urlscope/__init__.py` and read dynamically by Hatchling during builds.
+The package version is defined in `src/urlscope/__init__.py` and read dynamically by Hatchling during builds. Design notes and known urlscan API quirks are in [docs/design.md](docs/design.md); report security issues as described in [SECURITY.md](SECURITY.md).
 
 ## License
 
