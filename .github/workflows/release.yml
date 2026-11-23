@@ -1,10 +1,18 @@
-name: Release Build
+name: release
 
+# A tag publishes: test-v<version> to TestPyPI, v<version> to PyPI. The tag must match
+# __version__ in src/urlscope/__init__.py. One job builds and checks the distributions
+# once; the publish jobs only upload that artifact, and only they get the OIDC token
+# for PyPI trusted publishing. Environment "pypi" waits for the owner's approval.
 on:
   push:
     tags:
       - "v*"
-  workflow_dispatch:
+      - "test-v*"
+  workflow_dispatch:                    # build and check only; publishing needs a tag
+
+permissions:
+  contents: read
 
 jobs:
   build:
@@ -12,23 +20,26 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Set up uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d  # v10.4.0
         with:
           enable-cache: true
-          cache-dependency-glob: pyproject.toml
+          cache-dependency-glob: uv.lock
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
         with:
-          python-version: "3.11"
+          python-version-file: .python-version
 
       - name: Verify tag matches package version
         if: startsWith(github.ref, 'refs/tags/')
         run: |
-          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          TAG_VERSION="${GITHUB_REF_NAME#test-}"
+          TAG_VERSION="${TAG_VERSION#v}"
           PACKAGE_VERSION="$(python - <<'PY'
           from pathlib import Path
           import re
@@ -50,10 +61,53 @@ jobs:
         run: uv build
 
       - name: Validate distributions
-        run: uvx twine check dist/*
+        run: uvx twine==7.0.0 check --strict dist/*
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+      - name: Upload distributions
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
         with:
-          name: dist-${{ github.ref_name || github.run_id }}
+          name: dist
           path: dist/
+          if-no-files-found: error
+
+  publish-testpypi:
+    if: startsWith(github.ref, 'refs/tags/test-v')
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: testpypi                    # deploys from test-v* tags only
+      url: https://test.pypi.org/p/urlscope
+    permissions:
+      id-token: write                   # trusted publishing
+
+    steps:
+      - name: Download distributions
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8.0.2
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publish to TestPyPI
+        uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086  # v1.14.3
+        with:
+          repository-url: https://test.pypi.org/legacy/
+
+  publish-pypi:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi                        # deploys from v* tags only, after the owner approves
+      url: https://pypi.org/p/urlscope
+    permissions:
+      id-token: write                   # trusted publishing
+
+    steps:
+      - name: Download distributions
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333  # v8.0.2
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086  # v1.14.3
