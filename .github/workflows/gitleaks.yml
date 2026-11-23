@@ -1,0 +1,21 @@
+name: gitleaks
+on:
+  push:
+  pull_request:
+  schedule: [{ cron: '17 4 * * 1' }]   # weekly re-audit of full history
+  workflow_dispatch:
+permissions: { contents: read }
+jobs:
+  scan:
+    runs-on: ubuntu-24.04               # its apt gitleaks (8.16) matches the local one; bump deliberately
+    timeout-minutes: 10                 # fail fast if an apt mirror hangs (default is 6 h)
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          fetch-depth: 0                # full history for content scan + git log --all
+          persist-credentials: false
+      - run: sudo apt-get update && sudo apt-get install -y gitleaks
+      - run: gitleaks detect --source . --config .gitleaks.toml --redact -v          # content
+      - run: |                                                                        # messages
+          git log --all --format=%B > "$RUNNER_TEMP/m.txt"
+          gitleaks detect --no-git --source "$RUNNER_TEMP/m.txt" --config .gitleaks.toml --redact -v
