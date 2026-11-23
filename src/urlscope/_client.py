@@ -3,7 +3,7 @@ import logging
 import time
 from typing import Any, Literal
 
-from ._exceptions import NotFoundError, ScanDeletedError, ScanTimeoutError
+from ._exceptions import NotFoundError, ScanTimeoutError
 from ._http import _HTTPTransport
 from .models import QuotaInfo, ScanResult, SearchResponse, SubmissionResponse
 
@@ -139,7 +139,7 @@ class UrlscopeClient:
             override_safety=override_safety,
             country=country,
         )
-        started_at = time.monotonic()
+        deadline = time.monotonic() + poll_timeout
 
         if initial_wait > 0:
             LOGGER.debug(
@@ -149,25 +149,23 @@ class UrlscopeClient:
             )
             await asyncio.sleep(initial_wait)
 
+        # Poll at least once, even when initial_wait already used up poll_timeout,
+        # and once more at the deadline: the last sleep is cut to the time left.
+        # ScanDeletedError (410) and other errors propagate from get_result.
         while True:
-            elapsed = time.monotonic() - started_at
-            if elapsed > poll_timeout:
-                message = (
-                    f"Scan {submission.uuid} still pending after {poll_timeout} seconds"
-                )
-                raise ScanTimeoutError(
-                    message,
-                    uuid=submission.uuid,
-                )
-
             try:
                 LOGGER.debug("Polling result for scan %s", submission.uuid)
                 return await self.get_result(submission.uuid)
             except NotFoundError:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    message = (
+                        f"Scan {submission.uuid} still pending after "
+                        f"{poll_timeout} seconds"
+                    )
+                    raise ScanTimeoutError(message, uuid=submission.uuid) from None
                 LOGGER.debug("Scan %s is still pending", submission.uuid)
-                await asyncio.sleep(poll_interval)
-            except ScanDeletedError:
-                raise
+                await asyncio.sleep(min(poll_interval, remaining))
 
     @staticmethod
     def _serialize_override_safety(
