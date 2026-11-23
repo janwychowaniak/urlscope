@@ -189,7 +189,7 @@ Key response models:
 - `SearchResponse`, `SearchResultItem`
 - `QuotaInfo`, `QuotaWindow`
 
-Every model keeps the fields it does not type: `result.model_extra` holds them, and `result.model_dump(by_alias=True)` returns the whole payload under urlscan's field names.
+Every model keeps the fields it does not type: `result.model_extra` holds them, and `result.model_dump(by_alias=True)` returns the whole parsed response as a dict with urlscan's field names, including computed fields such as `QuotaInfo.quotas`.
 
 `ScanResult.verdicts` follows the live urlscan structure with nested sections such as `overall`, `urlscan`, `engines`, and `community`. For example, use `result.verdicts.overall.score` for the top-level score.
 

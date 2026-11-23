@@ -12,4 +12,4 @@ Problems in the urlscan.io service itself belong to urlscan, not to this library
 
 ## Supported versions
 
-Only the latest release on PyPI receives security fixes.
+Only the most recent version published on PyPI receives security fixes.

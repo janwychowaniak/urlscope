@@ -44,8 +44,8 @@ To run the mocked tests on another supported Python without touching `.venv`:
 - Every model uses `ConfigDict(extra="allow", populate_by_name=True)`; camelCase wire names map
   to snake_case fields through `Field(alias=...)`, e.g. `apexDomain` to `apex_domain`.
 - Runtime dependencies are `httpx2` and `pydantic` only. Their lower bounds in `pyproject.toml`
-  are what CI's `lowest-deps` job proves (Python 3.11 with the oldest allowed versions);
-  Dependabot moves only `uv.lock`.
+  are what CI's `lowest-deps` job proves (Python 3.11 with the oldest allowed versions); for
+  Python dependencies Dependabot moves only `uv.lock`.
 
 ## Tests
 
@@ -54,9 +54,11 @@ To run the mocked tests on another supported Python without touching `.venv`:
   accept `httpx2.Response` yet, so `httpx` stays a dev dependency). The fixture fails on routes
   that are never called and on requests without a route.
 - Prefer shared fixtures in `tests/conftest.py` over inline payloads. Assert on values, not on
-  `id()` or other runtime reuse details.
-- To fake time in the client, replace `urlscope._client`'s `time` and `asyncio` references (see
-  `fake_clock` in `tests/test_result.py`), never the global ones the event loop uses.
+  `id()` or other runtime reuse details, unless identity is what the test checks.
+- To fake time or randomness, replace the module references in `urlscope._client` or
+  `urlscope._http` (`time`, `asyncio`, `random`) with stand-ins, as `fake_clock` in
+  `tests/test_result.py` and `tests/test_retry.py` do; never patch attributes of the global
+  modules, which the event loop and other code share.
 - Live tests (`tests/live/`, marker `live`) run on demand and weekly in CI (`live-api.yml`,
   environment `live-api`, secret `URLSCAN_API_KEY`). They fail on HTTP errors and on responses
   that no longer fit the models, and list unmodeled fields in the summary; `KNOWN_UNMODELED` in

@@ -1,4 +1,5 @@
 import logging
+from types import SimpleNamespace
 
 import httpx
 import pytest
@@ -22,8 +23,10 @@ async def test_429_with_reset_after_header_retries_after_header_duration(
     async def fake_sleep(delay: float) -> None:
         sleep_calls.append(delay)
 
-    monkeypatch.setattr(http_module.asyncio, "sleep", fake_sleep)
-    monkeypatch.setattr(http_module.random, "uniform", lambda _a, _b: 1.1)
+    monkeypatch.setattr(http_module, "asyncio", SimpleNamespace(sleep=fake_sleep))
+    monkeypatch.setattr(
+        http_module, "random", SimpleNamespace(uniform=lambda _a, _b: 1.1)
+    )
     caplog.set_level(logging.DEBUG, logger="urlscope")
 
     route = httpx2_mock.get(f"{test_base_url}/api/v1/result/scan-123/").mock(
@@ -59,8 +62,10 @@ async def test_429_without_header_uses_exponential_backoff_with_jitter(
     async def fake_sleep(delay: float) -> None:
         sleep_calls.append(delay)
 
-    monkeypatch.setattr(http_module.asyncio, "sleep", fake_sleep)
-    monkeypatch.setattr(http_module.random, "uniform", lambda _a, _b: 0.8)
+    monkeypatch.setattr(http_module, "asyncio", SimpleNamespace(sleep=fake_sleep))
+    monkeypatch.setattr(
+        http_module, "random", SimpleNamespace(uniform=lambda _a, _b: 0.8)
+    )
 
     route = httpx2_mock.get(f"{test_base_url}/api/v1/result/scan-123/").mock(
         side_effect=[
@@ -95,8 +100,10 @@ async def test_multiple_429s_then_200_succeeds(
     async def fake_sleep(delay: float) -> None:
         sleep_calls.append(delay)
 
-    monkeypatch.setattr(http_module.asyncio, "sleep", fake_sleep)
-    monkeypatch.setattr(http_module.random, "uniform", lambda _a, _b: 1.0)
+    monkeypatch.setattr(http_module, "asyncio", SimpleNamespace(sleep=fake_sleep))
+    monkeypatch.setattr(
+        http_module, "random", SimpleNamespace(uniform=lambda _a, _b: 1.0)
+    )
 
     route = httpx2_mock.get(f"{test_base_url}/api/v1/result/scan-123/").mock(
         side_effect=[
@@ -139,8 +146,10 @@ async def test_max_retries_exceeded_raises_rate_limit_error_with_attrs(
     async def fake_sleep(delay: float) -> None:
         sleep_calls.append(delay)
 
-    monkeypatch.setattr(http_module.asyncio, "sleep", fake_sleep)
-    monkeypatch.setattr(http_module.random, "uniform", lambda _a, _b: 1.0)
+    monkeypatch.setattr(http_module, "asyncio", SimpleNamespace(sleep=fake_sleep))
+    monkeypatch.setattr(
+        http_module, "random", SimpleNamespace(uniform=lambda _a, _b: 1.0)
+    )
     caplog.set_level(logging.WARNING, logger="urlscope")
 
     rate_limited = httpx.Response(

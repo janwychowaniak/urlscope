@@ -9,8 +9,9 @@ from what one would expect. The code is the source of truth for what the library
   versions of this library. The models therefore type the stable, commonly used fields and keep
   the rest in Pydantic extras, and a weekly live test (`tests/live/`) checks the real API.
 - **Partial typing.** Every model uses `extra="allow"`: fields a model does not type stay
-  readable in `model.model_extra`, and `model.model_dump(by_alias=True)` returns the whole payload
-  under urlscan's field names. `extra="ignore"` would drop data users need; `extra="forbid"` would
+  readable in `model.model_extra`, and `model.model_dump(by_alias=True)` returns the whole parsed
+  response as a dict with urlscan's field names, including computed fields such as
+  `QuotaInfo.quotas`. `extra="ignore"` would drop data users need; `extra="forbid"` would
   break on every field urlscan adds. Sections whose presence and shape vary between scans stay
   untyped on purpose (see the quirks below).
 - **Few dependencies.** The runtime needs `httpx2`, Pydantic's continuation of httpx (whose last
@@ -29,8 +30,9 @@ from what one would expect. The code is the source of truth for what the library
 
 ### API key
 
-An explicit `api_key` wins over the `URLSCAN_API_KEY` environment variable. With neither, the
-client raises `AuthenticationError` at construction, before any request.
+An explicit `api_key` wins over the `URLSCAN_API_KEY` environment variable. With neither,
+`UrlscopeClient` raises `AuthenticationError` at construction, before any request; `SyncClient`,
+which builds a client for each call, raises it at its first call.
 
 ### Errors
 
@@ -44,7 +46,8 @@ client raises `AuthenticationError` at construction, before any request.
 | 429 after `max_retries` retries | `RateLimitError` (`retry_after`, `scope`, `window`) |
 | any other 4xx or 5xx | `APIError` (`status_code`, `message`) |
 
-The message comes from the JSON error body (`message`, `description`, `detail` or `errors[]`). A
+The message comes from the JSON error body (`message`, `description`, `detail`, `error` or
+`errors[]`). A
 non-JSON body enters the message only when it is text, cut to 300 characters; otherwise the
 message reads like `HTTP 404 (image/png, 15130 bytes)`. Network failures (connection errors,
 timeouts) are not wrapped: they propagate as `httpx2` exceptions. `submit` rejects more than 10
