@@ -709,7 +709,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "httpx2", specifier = ">=2.16" },
+    { name = "httpx2", specifier = ">=2.0" },
     { name = "pydantic", specifier = ">=2" },
 ]
 
