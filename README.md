@@ -8,12 +8,6 @@
 pip install urlscope
 ```
 
-If you want to install the current prerelease from PyPI, use:
-
-```bash
-pip install --pre urlscope
-```
-
 Set your API key before making requests:
 
 ```bash
