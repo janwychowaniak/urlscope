@@ -1,7 +1,7 @@
 # urlscope design notes
 
 Why the library is built the way it is, and how the live urlscan.io API behaves where it differs
-from what one would expect. The code is the source of truth for what the library does.
+from what one would expect.
 
 ## Principles
 
@@ -41,7 +41,7 @@ which builds a client for each call, raises it at its first call.
 | 400 "Invalid API key format" | `AuthenticationError` |
 | any other 400 | `ValidationError` |
 | 401, 403 | `AuthenticationError` |
-| 404 | `NotFoundError` (also a scan that is still pending) |
+| 404 | `NotFoundError` |
 | 410 | `ScanDeletedError` |
 | 429 after `max_retries` retries | `RateLimitError` (`retry_after`, `scope`, `window`) |
 | any other 4xx or 5xx | `APIError` (`status_code`, `message`) |
@@ -81,9 +81,8 @@ retries, the initial wait and each poll. WARNING: rate limit retries exhausted.
   page size defaults to 100; urlscan enforces the maximum.
 - Search reads urlscan's search index: a UUID that `get_result` retrieves may not appear in
   `task.uuid:<uuid>` results. Use `get_result` when the UUID is known.
-- Search items carry sections that vary between scans (`verdicts`, `dom`, `frames`, `links`,
-  `text`, `scanner`, `meta`, `image`, `clipboard`, `team`, `websockets`); they stay in extras and
-  are listed in `KNOWN_UNMODELED` in `tests/live/conftest.py`. A fresh scan result sometimes
+- Search items carry sections whose presence and shape vary between scans; they stay in extras,
+  and `KNOWN_UNMODELED` in `tests/live/conftest.py` lists them. A fresh scan result sometimes
   carries `metatags`, which a later fetch of the same scan lacks.
 - Quotas (`GET /api/v1/quotas`) are nested under `limits`, next to metadata entries such as
   `features`, `products` and `queryableFields`. `QuotaInfo.limits` keeps the raw structure, and

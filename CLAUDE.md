@@ -57,8 +57,8 @@ To run the mocked tests on another supported Python without touching `.venv`:
   `id()` or other runtime reuse details, unless identity is what the test checks.
 - To fake time or randomness, replace the module references in `urlscope._client` or
   `urlscope._http` (`time`, `asyncio`, `random`) with stand-ins, as `fake_clock` in
-  `tests/test_result.py` and `tests/test_retry.py` do; never patch attributes of the global
-  modules, which the event loop and other code share.
+  `tests/test_result.py` and the stand-ins in `tests/test_retry.py` do; never patch attributes
+  of the global modules, which the event loop and other code share.
 - Live tests (`tests/live/`, marker `live`) run on demand and weekly in CI (`live-api.yml`,
   environment `live-api`, secret `URLSCAN_API_KEY`). They fail on HTTP errors and on responses
   that no longer fit the models, and list unmodeled fields in the summary; `KNOWN_UNMODELED` in
@@ -74,8 +74,8 @@ To run the mocked tests on another supported Python without touching `.venv`:
   that says why.
 - Release: bump `__version__`, commit and push; push the tag `test-v<version>` to publish to
   TestPyPI and check the result there; then push `v<version>` to publish to PyPI. `release.yml`
-  builds once, checks the tag against `__version__` and publishes through trusted publishing;
-  environment `pypi` waits for the owner's approval. Push one tag at a time
+  builds once, checks the tag against `__version__` and publishes; environment `pypi` waits for
+  the owner's approval. Push one tag at a time
   (`git push origin v<version>`), never `--tags`.
 - Release tags cannot be moved or deleted (a repository ruleset), and PyPI never accepts the same
   version twice; fixing a published tag means a new version.
